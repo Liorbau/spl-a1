@@ -21,8 +21,13 @@ const int Facility::getTimeLeft() const{
 return timeLeft;
 }
 
-void Simulation::step(){
-
+void Facility::reduceTime(){
+    if(timeLeft > 0){
+        timeLeft--;
+        if(timeLeft == 0){
+            setStatus(FacilityStatus::OPERATIONAL);
+        }
+    }
 }
 
 void Facility::setStatus(FacilityStatus status){
@@ -62,9 +67,3 @@ const string Facility::toString() const{
            "\nStatus: " + (status == FacilityStatus::UNDER_CONSTRUCTIONS ? "Under Construction" : "Operational") +
            "\nTime Left: " + std::to_string(timeLeft);
 }
-
-     //   FacilityStatus step();
-
-
-
-
