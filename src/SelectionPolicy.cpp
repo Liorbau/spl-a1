@@ -2,15 +2,18 @@
 #include <stdexcept>
 #include <algorithm>
 #include <iostream>
+#include <string>
 
-//Destructor
-SelectionPolicy::~SelectionPolicy() = default;
-
+using namespace std;
 
 //----------Naive selection policy----------
 
 //Constructor
 NaiveSelection::NaiveSelection() : lastSelectedIndex(-1){}
+
+//Copy constructor
+NaiveSelection::NaiveSelection(const NaiveSelection &other) : 
+    lastSelectedIndex(other.lastSelectedIndex) {}
 
 //Methods
 const FacilityType& NaiveSelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
@@ -19,11 +22,11 @@ const FacilityType& NaiveSelection::selectFacility(const vector<FacilityType>& f
     }
 
     lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
-    return facilitiesOptions[lastSelectedIndex];
+    return facilitiesOptions.at(lastSelectedIndex);
 }
 
 const string NaiveSelection::toString() const{
-    return "Naive Selection Policy, last selected index is: " + lastSelectedIndex;
+    return "Naive Selection Policy selected, last selected index is: " + std::to_string(lastSelectedIndex);
 } 
 
 NaiveSelection* NaiveSelection::clone() const{
@@ -32,38 +35,109 @@ NaiveSelection* NaiveSelection::clone() const{
 
 //----------Balanced Selection Policy----------
 
-//Constructors
+//Constructor
 BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore)
 : LifeQualityScore(LifeQualityScore), EconomyScore(EconomyScore), EnvironmentScore(EnvironmentScore){}
 
+//Copy constructor
+BalancedSelection::BalancedSelection(const BalancedSelection &other) : 
+    LifeQualityScore(other.LifeQualityScore), EconomyScore(other.EconomyScore), EnvironmentScore(other.EnvironmentScore) {}
+
 //Methods
 const FacilityType& BalancedSelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
-    int minDistance = -1; // נעדכן שיהיה מצב נוכחי
-    for(int i = 0; i < facilitiesOptions.size(); i++){
+    if(facilitiesOptions.empty()){
+        throw std::runtime_error("No facility options");
+    }
 
-        int cur_lifeQuality = facilitiesOptions[i].getLifeQualityScore() + LifeQualityScore;
-        int cur_economy = facilitiesOptions[i].getEconomyScore() + EconomyScore;
-        int cur_environment = facilitiesOptions[i].getEnvironmentScore() + EnvironmentScore;
+    int cur_lq = facilitiesOptions[0].getLifeQualityScore() + LifeQualityScore;
+    int cur_eco = facilitiesOptions[0].getEconomyScore() + EconomyScore;
+    int cur_env = facilitiesOptions[0].getEnvironmentScore() + EnvironmentScore;
+    
+    int min_diff = std::max({cur_lq, cur_eco, cur_env}) - std::min({cur_lq, cur_eco, cur_env});
+    int selected_fac_index = 0;
 
-        int min = std::min({cur_lifeQuality, cur_economy, cur_environment});
-        int max = std::max({cur_lifeQuality, cur_economy, cur_environment});
+    for(int i = 1; i < facilitiesOptions.size(); i++){
+        cur_lq = std::abs(facilitiesOptions[i].getLifeQualityScore() + LifeQualityScore);
+        cur_eco = std::abs(facilitiesOptions[i].getEconomyScore() + EconomyScore);
+        cur_env = std::abs(facilitiesOptions[i].getEnvironmentScore() + EnvironmentScore);
 
-        if(max - min < minDistance){
-            
+        if(std::max({cur_lq, cur_eco, cur_env}) - std::min({cur_lq, cur_eco, cur_env}) < min_diff){
+            min_diff = std::max({cur_lq, cur_eco, cur_env}) - std::min({cur_lq, cur_eco, cur_env});
+            selected_fac_index = i;
         }
     }
+    return facilitiesOptions[selected_fac_index];
 }
 
+const string BalancedSelection::toString() const{
+    return "Balanced Selection Policy selected";
+} 
 
+BalancedSelection* BalancedSelection::clone() const{
+    return new BalancedSelection(*this);
+}
 
+//----------Economy Selection Policy----------
 
+//Constructors
+EconomySelection::EconomySelection() : lastSelectedIndex(0){}
 
- /*public:
-        const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
-        const string toString() const override;
-        BalancedSelection *clone() const override;
-        ~BalancedSelection() override = default;
-    private:
-        int LifeQualityScore;
-        int EconomyScore;
-        int EnvironmentScore; */
+//Copy constructor
+EconomySelection::EconomySelection(const EconomySelection &other) :
+    lastSelectedIndex(other.lastSelectedIndex) {}
+
+//Methods
+const FacilityType& EconomySelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
+    if(facilitiesOptions.empty()){
+        throw std::runtime_error("No facility options");
+    }
+
+    FacilityCategory cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
+
+    while(cur_category != FacilityCategory::ECONOMY){
+        lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
+        cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
+    }
+
+    return facilitiesOptions.at(lastSelectedIndex);
+}
+
+const string EconomySelection::toString() const{
+    return "Economy Selection Policy selected, last selected index is: " + std::to_string(lastSelectedIndex);
+}
+
+EconomySelection* EconomySelection::clone() const{
+    return new EconomySelection(*this);
+}
+
+//----------Sustainability Selection Policy----------
+
+SustainabilitySelection::SustainabilitySelection() : lastSelectedIndex(0) {}
+
+//Copy constructor
+SustainabilitySelection::SustainabilitySelection(const SustainabilitySelection &other) :
+    lastSelectedIndex(other.lastSelectedIndex) {}
+
+//Methods
+const FacilityType& SustainabilitySelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
+    if(facilitiesOptions.empty()){
+        throw std::runtime_error("No facility options");
+    }
+
+    FacilityCategory cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
+
+    while(cur_category != FacilityCategory::ENVIRONMENT){
+        lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
+        cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
+    }
+
+    return facilitiesOptions.at(lastSelectedIndex);
+}
+
+const string SustainabilitySelection::toString() const{
+    return "Sustainability Selection Policy selected, last selected index is: " + std::to_string(lastSelectedIndex);
+}
+
+SustainabilitySelection* SustainabilitySelection::clone() const{
+    return new SustainabilitySelection(*this);
+}
