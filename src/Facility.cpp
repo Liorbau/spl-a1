@@ -13,6 +13,12 @@ Facility::Facility(const Facility &other)
 : FacilityType(other.name, other.category, other.price, other.lifeQuality_score, other.economy_score, other.environment_score), settlementName(other.settlementName), timeLeft(other.price), status(other.status){}
 
 //Methods
+
+Facility* Facility::clone()
+{
+    return new Facility(*this);
+}
+
 const string &Facility::getSettlementName() const{
 return settlementName;
 }
