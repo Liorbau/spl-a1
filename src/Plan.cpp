@@ -49,7 +49,7 @@ void Plan::step()
       curr_facility->reduceTime();
       if (curr_facility->getStatus() == FacilityStatus::OPERATIONAL)
       {
-         underConstruction.;
+         //underConstruction.;
       }
    }
 
