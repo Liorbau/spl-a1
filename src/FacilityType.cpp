@@ -13,6 +13,11 @@
         return name;
     }
 
+    FacilityType* FacilityType::clone()
+    {
+        return new FacilityType(*this);
+    }
+
     int FacilityType::getCost() const{
         return price;
     }

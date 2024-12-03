@@ -1,11 +1,14 @@
 #include "Settlement.h"
 
-    Settlement::Settlement() : name(""), type(SettlementType::VILLAGE) {}
-
     Settlement::Settlement(const string &name, SettlementType type) :
         name(name),
         type(type)
     {}
+
+    Settlement* Settlement::clone()
+    {
+        return new Settlement(*this);
+    }
 
     const string& Settlement::getName() const
     {
