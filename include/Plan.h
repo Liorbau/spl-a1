@@ -18,6 +18,7 @@ class Plan {
         ~Plan(); //Destructor
         const int getlifeQualityScore() const;
         const int getEconomyScore() const;
+        Plan* clone();
         const int getEnvironmentScore() const;
         void setSelectionPolicy(SelectionPolicy* selectionPolicy);
         void step();

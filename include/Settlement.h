@@ -14,11 +14,11 @@ enum class SettlementType {
 
 class Settlement {
     public:
-        Settlement(); //Empty constructor
         Settlement(const string &name, SettlementType type);
         const string &getName() const;
         SettlementType getType() const;
         const string toString() const;
+        Settlement* clone();
 
         private:
             const string name;
