@@ -4,6 +4,7 @@
 #include "Facility.h"
 #include "Plan.h"
 #include "Settlement.h"
+
 using std::string;
 using std::vector;
 
@@ -13,6 +14,11 @@ class SelectionPolicy;
 class Simulation {
     public:
         Simulation(const string &configFilePath);
+        Simulation(Simulation& other); //Copy constuctor
+        Simulation(Simulation&& other); //Move contructor
+        ~Simulation(); //Destructor
+        Simulation& operator=(const Simulation& other); //Assignment operator //TODO
+        Simulation&& operator=(const Simulation&& other); //Move assignment operator //TODO
         void start();
         void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
         void addAction(BaseAction *action);

@@ -14,11 +14,6 @@ Facility::Facility(const Facility &other)
 
 //Methods
 
-Facility* Facility::clone()
-{
-    return new Facility(*this);
-}
-
 const string &Facility::getSettlementName() const{
 return settlementName;
 }

@@ -17,13 +17,13 @@ Plan::Plan(Plan &other) :
    status(other.status), life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score),
    facilities(other.facilities), facilityOptions(other.facilityOptions)
    {
-      for (Facility* f : facilities)
+      for (Facility* f : other.facilities)
       {
-         facilities.push_back(f->clone());
+         facilities.emplace_back(f->clone());
       }
-      for (Facility* f : underConstruction)
+      for (Facility* f : other.underConstruction)
       {
-         underConstruction.push_back(f->clone());
+         underConstruction.emplace_back(f->clone());
       }
    }
 
@@ -64,6 +64,11 @@ const int Plan::getlifeQualityScore() const
 const int Plan::getEconomyScore() const
 {
    return economy_score;
+}
+
+Plan* Plan::clone()
+{
+    return new Plan(*this);
 }
 
 const int Plan::getEnvironmentScore() const
