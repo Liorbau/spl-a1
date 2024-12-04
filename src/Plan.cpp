@@ -189,3 +189,18 @@ const string Plan::toString() const
 
    return toReturn;
 }
+
+void Plan::printFacilities()
+{
+    for(Facility* fa : facilities)
+    {
+      std::cout << fa->getName() << std::endl;
+      std::cout << "OPERATIONAL" << std::endl;
+    }
+
+    for(Facility* fa : underConstruction)
+    {
+      std::cout << fa->getName() << std::endl;
+      std::cout << "UNDER_CONSTUCTIONS" << std::endl;
+    }
+}
