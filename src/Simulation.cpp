@@ -168,6 +168,18 @@ Simulation::~Simulation()
     facilitiesOptions.clear();
 }
 
+//Copy assignment operator
+Simulation& Simulation::operator=(const Simulation& other)
+{
+    //TODO
+}
+
+//Move assignment operator
+Simulation&& Simulation::operator=(const Simulation&& other)
+{
+    //TODO
+}
+
 //--------------- Methods ---------------
 
 void Simulation::start()
@@ -176,11 +188,8 @@ void Simulation::start()
     cout << "The simulation has started" << endl;
 }
 
-//TODO
 void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy)
 {
-    string s_name = settlement.getName();
-    string policy;
     plans.emplace_back(new Plan(planCounter, settlement, selectionPolicy, facilitiesOptions));
 }
 
@@ -189,28 +198,27 @@ void Simulation::addAction(BaseAction* action)
     actionsLog.push_back(action);
 }
 
+Settlement& Simulation::findSettlement (string name)
+{
+    for (Settlement* s : settlements)
+    {
+        if (s->getName() == name)
+        {
+            Settlement& s_ref = *s;
+            return s_ref;
+        }
+    }
+}
+
+
 bool Simulation::addSettlement(Settlement* s)
 {
-    string name = s->getName();
-    if (isSettlementExists(name))
-        throw std::invalid_argument("Settlement already exists");
-    
     settlements.push_back(s);
     return true;
 }
 
 bool Simulation::addFacility(FacilityType f)
 {
-    string name = f.getName();
-    bool find = false;
-    for (FacilityType fa : facilitiesOptions)
-    {
-        if (fa.getName() == name)
-            find = true;
-    }
-    if (find)
-        throw std::invalid_argument("Facility already exists");
-    
     facilitiesOptions.emplace_back(f);
     return true;
 }
@@ -226,6 +234,26 @@ bool Simulation::isSettlementExists(const string &name)
     return find;
 }
 
+bool Simulation::isFacilityExists(string name)
+{
+    bool find = false;
+    for (FacilityType fa : facilitiesOptions)
+    {
+        if (fa.getName() == name)
+        {
+            find = true;
+            break;
+        }
+    }
+    return find;
+}
+
+const int Simulation::plans_size ()
+{
+    return plans.size();
+}
+
+
 Settlement& Simulation::getSettlement(const string &name)
 {
     for (Settlement* s : settlements)
@@ -238,9 +266,6 @@ Settlement& Simulation::getSettlement(const string &name)
 
 Plan& Simulation::getPlan(const int id)
 {
-    if (id>=plans.size() || id<0)
-        throw std::invalid_argument("Invalid ID");
-    
     return plans.at(id);
 }
 
@@ -259,19 +284,3 @@ void Simulation::close()
 {
     isRunning = false;
 }
-
-/*
-class Simulation {
-    public:
-        Simulation& operator=(const Simulation& other); //Assignment operator //TODO
-        Simulation&& operator=(const Simulation&& other); //Move assignment operator //TODO
-        void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
-
-    private:
-        bool isRunning;
-        int planCounter; //For assigning unique plan IDs
-        vector<BaseAction*> actionsLog;
-        vector<Plan> plans;
-        vector<Settlement*> settlements;
-        vector<FacilityType> facilitiesOptions;
-}; */

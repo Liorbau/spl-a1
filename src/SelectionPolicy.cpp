@@ -33,6 +33,11 @@ NaiveSelection* NaiveSelection::clone() const{
     return new NaiveSelection(*this);
 }
 
+string NaiveSelection::getType()
+{
+    return "nve";
+}
+
 //----------Balanced Selection Policy----------
 
 //Constructor
@@ -77,6 +82,11 @@ BalancedSelection* BalancedSelection::clone() const{
     return new BalancedSelection(*this);
 }
 
+string BalancedSelection::getType()
+{
+    return "bal";
+}
+
 //----------Economy Selection Policy----------
 
 //Constructors
@@ -110,6 +120,10 @@ EconomySelection* EconomySelection::clone() const{
     return new EconomySelection(*this);
 }
 
+string EconomySelection::getType()
+{
+    return "eco";
+}
 //----------Sustainability Selection Policy----------
 
 SustainabilitySelection::SustainabilitySelection() : lastSelectedIndex(0) {}
@@ -140,4 +154,8 @@ const string SustainabilitySelection::toString() const{
 
 SustainabilitySelection* SustainabilitySelection::clone() const{
     return new SustainabilitySelection(*this);
+}
+string SustainabilitySelection::getType()
+{
+    return "env";
 }
