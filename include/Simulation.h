@@ -33,6 +33,8 @@ class Simulation {
         void step();
         void close();
         void open();
+        const vector<BaseAction*>& getActionsLog();
+        const vector<Plan>& getPlans();
 
     private:
         bool isRunning;

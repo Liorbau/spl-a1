@@ -283,4 +283,13 @@ void Simulation::open()
 void Simulation::close()
 {
     isRunning = false;
+    for (Plan p : plans)
+    {
+        p.toString();
+    }
+}
+
+const vector<BaseAction*> Simulation::getActionsLog()
+{
+    return actionsLog;
 }
