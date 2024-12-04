@@ -243,20 +243,97 @@ void PrintPlanStatus::act(Simulation &s)
         cout << "SettlementName: " + s.getPlan(planId).getSettlementName() << endl;
         s.getPlan(planId).printStatus();
         cout << "SelectionPolicy: "+ s.getPlan(planId).getPolicy() << endl;
+        cout << "LifeQuality_score:" + to_string(s.getPlan(planId).getlifeQualityScore());
+        cout << "EconomyScore _score:" + to_string(s.getPlan(planId).getEconomyScore());
+        cout << "EnvrionmentScore _score:" + to_string(s.getPlan(planId).getEnvironmentScore());
+        s.getPlan(planId).printFacilities();
+
     }
+}
+
+const string PrintPlanStatus::toString() const
+{
+    string act = "Action: Print Plan Status";
+    string stat = "";
+    if (getStatus() == ActionStatus::COMPLETED)
+        stat = "COMPLETED";
+    else
+        stat = "ERROR";
+    stat = "Status: "+stat;
+    if (stat == "ERROR")
+        return act + "\n" + stat + "\n" + "Error: "+getErrorMsg(); 
+    else
+       return act + "\n" + stat; 
+
+}
+
+PrintPlanStatus* PrintPlanStatus::clone() const
+{
+    return new PrintPlanStatus(*this);
 }
 
 
 
+//---------- ChangePlanPolicy ----------
 
-/* class PrintPlanStatus: public BaseAction {
-    public:
-        PrintPlanStatus(int planId);
-        void act(Simulation &simulation) override;
-        PrintPlanStatus *clone() const override;
-        const string toString() const override;
-    private:
-        const int planId;
-};
+//Constructor
+ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy): BaseAction(), planId(planId), newPolicy(newPolicy){}
 
-;*/
+//Methods
+void ChangePlanPolicy::act(Simulation &s)
+{
+    if(s.getPlan(planId).getPolicy() == newPolicy)
+    {
+        error("Cannot change selection policy");
+    }
+
+    else
+    {
+        if(newPolicy == "nve")
+        {
+            s.getPlan(planId).setSelectionPolicy(new NaiveSelection());
+        } 
+
+        else if(newPolicy == "eco")
+        {
+            s.getPlan(planId).setSelectionPolicy(new EconomySelection());
+        }
+
+        else if(newPolicy == "env")
+        {
+            s.getPlan(planId).setSelectionPolicy(new SustainabilitySelection());
+        }
+
+        else if(newPolicy == "bal")
+        {
+            s.getPlan(planId).setSelectionPolicy(new BalancedSelection(0, 0, 0));
+        }
+
+        else
+        {
+            error("Cannot change selection policy");
+        }
+    }
+}
+
+const string ChangePlanPolicy::toString() const
+{
+    string act = "Action: Change Plan Policy";
+    string stat = "";
+    if (getStatus() == ActionStatus::COMPLETED)
+        stat = "COMPLETED";
+    else
+        stat = "ERROR";
+    stat = "Status: "+stat;
+    if (stat == "ERROR")
+        return act + "\n" + stat + "\n" + "Error: "+getErrorMsg(); 
+    else
+       return act + "\n" + stat; 
+
+}
+
+ChangePlanPolicy* ChangePlanPolicy::clone() const
+{
+    return new ChangePlanPolicy(*this);
+}
+
