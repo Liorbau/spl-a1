@@ -63,18 +63,12 @@ void SimulateStep::act(Simulation &s)
 
 const string SimulateStep::toString() const
 {
-    string act = "Action: step";
-    string stat = "";
+    string status = "";
     if (getStatus() == ActionStatus::COMPLETED)
-        stat = "COMPLETED";
+        status = " COMPLETED";
     else
-        stat = "ERROR";
-    stat = "Status: "+stat;
-    if (stat == "ERROR")
-        return act + "\n" + stat + "\n" + "Error: "+getErrorMsg(); 
-    else
-       return act + "\n" + stat; 
-
+        status = " ERROR";
+    return "step "+std::to_string(numOfSteps)+status+"\n";
 }
 
 SimulateStep* SimulateStep::clone() const
@@ -125,18 +119,12 @@ void AddPlan::act(Simulation& s)
 
 const string AddPlan::toString() const
 {
-    string act = "Action: Add Plan";
-    string stat = "";
+    string status = "";
     if (getStatus() == ActionStatus::COMPLETED)
-        stat = "COMPLETED";
+        status = " COMPLETED";
     else
-        stat = "ERROR";
-    stat = "Status: "+stat;
-    if (stat == "ERROR")
-        return act + "\n" + stat + "\n" + "Error: "+getErrorMsg(); 
-    else
-       return act + "\n" + stat; 
-
+        status = " ERROR";
+    return "plan "+settlementName+" "+selectionPolicy+status+"\n";
 }
 
 AddPlan* AddPlan::clone() const
@@ -165,18 +153,19 @@ void AddSettlement::act(Simulation& s)
 
 const string AddSettlement::toString() const
 {
-    string act = "Action: Add Settlement";
-    string stat = "";
+    string status = "";
     if (getStatus() == ActionStatus::COMPLETED)
-        stat = "COMPLETED";
+        status = " COMPLETED";
     else
-        stat = "ERROR";
-    stat = "Status: "+stat;
-    if (stat == "ERROR")
-        return act + "\n" + stat + "\n" + "Error: "+getErrorMsg(); 
-    else
-       return act + "\n" + stat; 
-
+        status = " ERROR";
+    string type_toString = "";
+    if (settlementType == SettlementType::CITY)
+        type_toString = "CITY";
+    else if (settlementType == SettlementType::METROPOLIS)
+        type_toString = "METROPOLIS";
+    else //VILLAGE
+        type_toString = "VILLAGE";
+    return "settlement "+settlementName+" "+type_toString+" "+status+"\n";
 }
 
 AddSettlement* AddSettlement::clone() const
@@ -203,18 +192,19 @@ void AddFacility::act(Simulation &simulation)
 
 const string AddFacility::toString() const
 {
-    string act = "Action: Add Facility";
-    string stat = "";
+    string status = "";
     if (getStatus() == ActionStatus::COMPLETED)
-        stat = "COMPLETED";
+        status = " COMPLETED";
     else
-        stat = "ERROR";
-    stat = "Status: "+stat;
-    if (stat == "ERROR")
-        return act + "\n" + stat + "\n" + "Error: "+getErrorMsg(); 
-    else
-       return act + "\n" + stat; 
-
+        status = " ERROR";
+    string cat = "";
+    if (facilityCategory == FacilityCategory::ECONOMY)
+        cat = "1";
+    else if (facilityCategory == FacilityCategory::ENVIRONMENT)
+        cat = "2";
+    else //Life quality
+        cat = "0";
+    return "facility "+facilityName+" "+cat+" "+std::to_string(price)+" "+std::to_string(lifeQualityScore)+" "+std::to_string(economyScore)+" "+std::to_string(environmentScore)+"\n";
 }
 
 AddFacility* AddFacility::clone() const
@@ -239,13 +229,13 @@ void PrintPlanStatus::act(Simulation &s)
 
     else
     {
-        cout << "PlanID: " + std::to_string(planId) << endl;
-        cout << "SettlementName: " + s.getPlan(planId).getSettlementName() << endl;
+        cout << "PlanID: " + std::to_string(planId) +"\n";
+        cout << "SettlementName: " + s.getPlan(planId).getSettlementName() +"\n";
         s.getPlan(planId).printStatus();
-        cout << "SelectionPolicy: "+ s.getPlan(planId).getPolicy() << endl;
-        cout << "LifeQuality_score:" + to_string(s.getPlan(planId).getlifeQualityScore());
-        cout << "EconomyScore _score:" + to_string(s.getPlan(planId).getEconomyScore());
-        cout << "EnvrionmentScore _score:" + to_string(s.getPlan(planId).getEnvironmentScore());
+        cout << "SelectionPolicy: "+ s.getPlan(planId).getPolicy() +"\n";
+        cout << "LifeQuality_score:" + to_string(s.getPlan(planId).getlifeQualityScore()) +"\n";
+        cout << "EconomyScore _score:" + to_string(s.getPlan(planId).getEconomyScore()) +"\n";
+        cout << "EnvrionmentScore _score:" + to_string(s.getPlan(planId).getEnvironmentScore()) +"\n";
         s.getPlan(planId).printFacilities();
 
     }
@@ -291,21 +281,33 @@ void ChangePlanPolicy::act(Simulation &s)
     {
         if(newPolicy == "nve")
         {
+            cout << "planID: " + to_string(planId) +"\n";
+            cout << "previousPolicy: "+ s.getPlan(planId).getPolicy()+ "\n";
+            cout << "newPolicy: nve \n";
             s.getPlan(planId).setSelectionPolicy(new NaiveSelection());
         } 
 
         else if(newPolicy == "eco")
         {
+            cout << "planID: " + to_string(planId) +"\n";
+            cout << "previousPolicy: "+ s.getPlan(planId).getPolicy()+ "\n";
+            cout << "newPolicy: eco \n";
             s.getPlan(planId).setSelectionPolicy(new EconomySelection());
         }
 
         else if(newPolicy == "env")
         {
+            cout << "planID: " + to_string(planId) +"\n";
+            cout << "previousPolicy: "+ s.getPlan(planId).getPolicy()+ "\n";
+            cout << "newPolicy: env \n";
             s.getPlan(planId).setSelectionPolicy(new SustainabilitySelection());
         }
 
         else if(newPolicy == "bal")
         {
+            cout << "planID: " + to_string(planId) +"\n";
+            cout << "previousPolicy: "+ s.getPlan(planId).getPolicy()+ "\n";
+            cout << "newPolicy: bal \n";
             s.getPlan(planId).setSelectionPolicy(new BalancedSelection(0, 0, 0));
         }
 
@@ -336,4 +338,74 @@ ChangePlanPolicy* ChangePlanPolicy::clone() const
 {
     return new ChangePlanPolicy(*this);
 }
+
+
+
+// ---------- PrintActionsLog ----------
+
+PrintActionsLog::PrintActionsLog() : BaseAction() {}
+
+void PrintActionsLog::act(Simulation& s)
+{
+    for (BaseAction* a : s.getActionsLog())
+    {
+        cout << a->toString() +"\n";
+    }
+}
+
+const string PrintActionsLog::toString() const
+{
+    string act = "Action: Print actions log";
+    string stat = "";
+    if (getStatus() == ActionStatus::COMPLETED)
+        stat = "COMPLETED";
+    else
+        stat = "ERROR";
+    stat = "Status: "+stat;
+    if (stat == "ERROR")
+        return act + "\n" + stat + "\n" + "Error: "+getErrorMsg(); 
+    else
+       return act + "\n" + stat; 
+
+}
+
+PrintActionsLog* PrintActionsLog::clone() const
+{
+    return new PrintActionsLog(*this);
+}
+
+
+
+
+// ----------- Close ------------
+
+Close::Close() : BaseAction() {}
+
+void Close::act(Simulation& s)
+{
+    s.close();
+}
+
+Close* Close::clone() const
+{
+    return new Close(*this);
+}
+
+const string Close::toString() const
+{
+    return "Simulation closed.";
+}
+
+/*
+
+class Close : public BaseAction {
+    public:
+        Close();
+        void act(Simulation &simulation) override;
+        Close *clone() const override;
+        const string toString() const override;
+    private:
+
+
+};*/
 

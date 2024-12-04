@@ -129,15 +129,32 @@ const string Plan::getPolicy()
    return selectionPolicy->getType();
 }
 
+void Plan::printFacilities()
+{
+   for (Facility* f : facilities)
+   {
+      std::cout << "FacilityName: "+f->getName() +"\n";
+      std::cout << "FacilityStatus: OPERATIONAL \n";;
+
+   }
+   for (Facility* f : underConstruction)
+   {
+      std::cout << "FacilityName: "+f->getName() +"\n";
+      std::cout << "FacilityStatus: UNDER_CONSTRUCTIONS \n";
+
+   }
+}
 
 void Plan::printStatus()
 {
-   if(status == PlanStatus::AVALIABLE){
-      std::cout << "PlanStatus: AVAILABLE" << std::endl;
+   if(status == PlanStatus::AVALIABLE)
+   {
+      std::cout << "PlanStatus: AVAILABLE \n";
    }
 
-   else{
-      std::cout << "PlanStatus: BUSY" << std::endl;
+   else
+   {
+      std::cout << "PlanStatus: BUSY \n";
    }
 }
 
@@ -153,42 +170,11 @@ void Plan::addFacility(Facility* facility)
 
 const string Plan::toString() const
 {
-   string id_toString = "Plan ID is: "+ std::to_string(plan_id);
-   string settlement_toString = "Settlement: "+settlement.toString();
-   string selectionPolicy_toString = selectionPolicy->toString();
-   string status_toString = "";
-   if (status == PlanStatus::AVALIABLE)
-      status_toString = "AVAILABLE";
-   else
-      status_toString = "BUSY";
-   string facilities_toString = "";
-   for (int i=0 ; i<facilities.size()-1 ; i++)
-   {
-      facilities_toString = facilities_toString + facilities[i]->toString() + ", ";
-   }
-   facilities_toString = facilities_toString + facilities[facilities.size()]->toString();
-   string constructions_toString = "";
-   for (int i=0 ; i<underConstruction.size()-1 ; i++)
-   {
-      constructions_toString = constructions_toString + underConstruction[i]->toString() + ", ";
-   }
-   constructions_toString = constructions_toString + underConstruction[underConstruction.size()]->toString();
-   string lq_score_toString = std::to_string(life_quality_score);
-   string eco_score_toString = std::to_string(economy_score);
-   string env_score_toString = std::to_string(environment_score);
+   return "PlanID: "+ std::to_string(plan_id) +"\n" + "SettlementName: "+settlement.getName() + "\n" + 
+          "LifeQuality_Score: "+std::to_string(life_quality_score) +"\n" + "Economy_Score: "+std::to_string(economy_score) + "\n" +
+          "Environment_Score: "+std::to_string(environment_score) +"\n \n";
+}           
 
-   string toReturn = id_toString + std::string("\n") + 
-                     settlement_toString + std::string("\n") + 
-                     selectionPolicy_toString + std::string("\n") + 
-                     status_toString + std::string("\n") + 
-                     facilities_toString + std::string("\n") + 
-                     constructions_toString + std::string("\n") + 
-                     lq_score_toString + std::string("\n") + 
-                     env_score_toString + std::string("\n") + 
-                     env_score_toString;
-
-   return toReturn;
-}
 
 void Plan::printFacilities()
 {
