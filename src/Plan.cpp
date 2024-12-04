@@ -81,6 +81,12 @@ void Plan::setSelectionPolicy(SelectionPolicy *SelectionPolicy)
    selectionPolicy = SelectionPolicy;
 }
 
+const string Plan::getSettlementName()
+{
+   return settlement.getName();
+}
+
+
 void Plan::step()
 {
    while (status == PlanStatus::AVALIABLE)
@@ -118,14 +124,22 @@ void Plan::step()
       status = PlanStatus::AVALIABLE;
 }
 
+const string Plan::getPolicy()
+{
+   string type = "";
+   if (SelectionPolicy == SelectionPolicy::)
+   return type;
+}
+
+
 void Plan::printStatus()
 {
    if(status == PlanStatus::AVALIABLE){
-      std::cout << "Status is: AVAILABLE" << std::endl;
+      std::cout << "PlanStatus: AVAILABLE" << std::endl;
    }
 
    else{
-      std::cout << "Status is: BUSY" << std::endl;
+      std::cout << "PlanStatus: BUSY" << std::endl;
    }
 }
 
