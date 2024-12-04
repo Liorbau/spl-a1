@@ -126,9 +126,7 @@ void Plan::step()
 
 const string Plan::getPolicy()
 {
-   string type = "";
-   if (SelectionPolicy == SelectionPolicy::)
-   return type;
+   return selectionPolicy->getType();
 }
 
 

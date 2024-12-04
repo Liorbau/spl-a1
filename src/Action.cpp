@@ -242,7 +242,7 @@ void PrintPlanStatus::act(Simulation &s)
         cout << "PlanID: " + std::to_string(planId) << endl;
         cout << "SettlementName: " + s.getPlan(planId).getSettlementName() << endl;
         s.getPlan(planId).printStatus();
-        //cout << 
+        cout << "SelectionPolicy: "+ s.getPlan(planId).getPolicy() << endl;
     }
 }
 
