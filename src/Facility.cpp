@@ -68,3 +68,16 @@ const string Facility::toString() const{
            "\nStatus: " + (status == FacilityStatus::UNDER_CONSTRUCTIONS ? "Under Construction" : "Operational") +
            "\nTime Left: " + std::to_string(timeLeft);
 }
+
+const string Facility::getStatusToString()
+{
+    if (getStatus() == FacilityStatus::UNDER_CONSTRUCTIONS)
+    {
+        return "UNDER_CONSTRUCTIONS";
+    }
+
+    else
+    {
+        return "OPERATIONAL";
+    }
+}
