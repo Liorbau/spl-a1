@@ -198,12 +198,9 @@ void Simulation::addAction(BaseAction* action)
     actionsLog.push_back(action);
 }
 
-Settlement& Simulation::findSettlement (string name)
-{
-    for (Settlement* s : settlements)
-    {
-        if (s->getName() == name)
-        {
+Settlement& Simulation::findSettlement (string name){
+    for (Settlement* s : settlements){
+        if (s->getName() == name){
             Settlement& s_ref = *s;
             return s_ref;
         }
@@ -211,36 +208,29 @@ Settlement& Simulation::findSettlement (string name)
 }
 
 
-bool Simulation::addSettlement(Settlement* s)
-{
+bool Simulation::addSettlement(Settlement* s){
     settlements.push_back(s);
     return true;
 }
 
-bool Simulation::addFacility(FacilityType f)
-{
+bool Simulation::addFacility(FacilityType f){
     facilitiesOptions.emplace_back(f);
     return true;
 }
 
-bool Simulation::isSettlementExists(const string &name)
-{
+bool Simulation::isSettlementExists(const string &name){
     bool find = false;
-    for (Settlement* s : settlements)
-    {
+    for (Settlement* s : settlements){
         if (s->getName() == name)
             find = true;
     }
     return find;
 }
 
-bool Simulation::isFacilityExists(string name)
-{
+bool Simulation::isFacilityExists(string name){
     bool find = false;
-    for (FacilityType fa : facilitiesOptions)
-    {
-        if (fa.getName() == name)
-        {
+    for (FacilityType fa : facilitiesOptions){
+        if (fa.getName() == name){
             find = true;
             break;
         }
@@ -254,34 +244,28 @@ const int Simulation::plans_size ()
 }
 
 
-Settlement& Simulation::getSettlement(const string &name)
-{
-    for (Settlement* s : settlements)
-    {
+Settlement& Simulation::getSettlement(const string &name){
+    for (Settlement* s : settlements){
         if (s->getName() == name)
             return *s;
     }
     throw std::invalid_argument("Settlement doesn't exist");
 }
 
-Plan& Simulation::getPlan(const int id)
-{
+Plan& Simulation::getPlan(const int id){
     return plans.at(id);
 }
 
-void Simulation::step()
-{
+void Simulation::step(){
     for (Plan p :plans)
         p.step();
 }
 
-void Simulation::open()
-{
+void Simulation::open(){
     isRunning = true;
 }
 
-void Simulation::close()
-{
+void Simulation::close(){
     isRunning = false;
     for (Plan p : plans)
     {
@@ -289,7 +273,6 @@ void Simulation::close()
     }
 }
 
-const vector<BaseAction*> Simulation::getActionsLog()
-{
+const vector<BaseAction*>& Simulation::getActionsLog(){
     return actionsLog;
 }
