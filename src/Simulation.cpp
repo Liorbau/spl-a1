@@ -215,19 +215,98 @@ Simulation& Simulation::operator=(const Simulation&& other)
 
 //--------------- Methods ---------------
 
-void Simulation::start()
-{
-    isRunning = true;
+void Simulation::start(){
+    open();
     cout << "The simulation has started" << endl;
+
+    while (isRunning){
+        cout << "Enter an action: " << endl;
+        string action;
+        getline(cin, action);
+        vector<string> split_action = Auxiliary::parseArguments(action);
+
+        if (split_action.empty()) continue;
+
+        string cur_act = split_action[0];
+        if (cur_act == "step"){
+            SimulateStep(stoi(split_action[1])).act(*this);
+        }
+
+        else if (cur_act == "plan"){
+            AddPlan(split_action[1], split_action[2]).act(*this);
+        }
+
+        else if (cur_act == "settlement"){
+            SettlementType set_type;
+
+            if (split_action[2] == "0"){
+                set_type = SettlementType::VILLAGE;
+            }
+
+            else if (split_action[2] == "1"){
+                set_type = SettlementType::CITY;
+            }
+
+            else{ // (split_action[2] == "2")
+                set_type = SettlementType::METROPOLIS;
+            }
+
+            AddSettlement(split_action[1], set_type).act(*this);
+        }
+
+        else if (cur_act == "facility"){
+            FacilityCategory fac_cat;
+
+            if (split_action[2] == "0"){
+                fac_cat = FacilityCategory::LIFE_QUALITY;
+            }
+
+            else if (split_action[2] == "1"){
+                fac_cat = FacilityCategory::ECONOMY;
+            }
+
+            else{ // (split_action[2] == "2")
+                fac_cat = FacilityCategory::ENVIRONMENT;
+            }
+
+            AddFacility(split_action[1], fac_cat, stoi(split_action[3]), stoi(split_action[4]), stoi(split_action[5]), stoi(split_action[6])).act(*this);
+        }
+
+        else if (cur_act == "planStatus"){
+            PrintPlanStatus(stoi(split_action[1])).act(*this);
+        }
+
+        else if (cur_act == "changePolicy"){
+            ChangePlanPolicy(stoi(split_action[1]), split_action[2]).act(*this);
+        }
+
+        else if (cur_act == "log"){
+            PrintActionsLog().act(*this);
+        }
+
+        else if (cur_act == "close"){
+            Close().act(*this); //isRunning = false
+        }
+
+        else if (cur_act == "backup"){
+            BackupSimulation().act(*this);
+        }
+
+        else if (cur_act == "restore"){
+            RestoreSimulation().act(*this);
+        }
+
+        else{
+            cout << "Action not valid." << endl;
+        }
+    }
 }
 
-void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy)
-{
+void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy){
     plans.push_back(Plan(planCounter, settlement, selectionPolicy, facilitiesOptions));
 }
 
-void Simulation::addAction(BaseAction* action)
-{
+void Simulation::addAction(BaseAction* action){
     actionsLog.push_back(action->clone());
 }
 
@@ -239,7 +318,6 @@ Settlement& Simulation::findSettlement (string name){
         }
     }
 }
-
 
 bool Simulation::addSettlement(Settlement* s){
     settlements.push_back(s->clone());
@@ -304,7 +382,6 @@ void Simulation::close(){
         p.toString();
     }
     isRunning = false;
-
 }
 
 const vector<BaseAction*>& Simulation::getActionsLog(){
