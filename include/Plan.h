@@ -17,7 +17,7 @@ class Plan {
         Plan(Plan&& other); //Move contructor
         ~Plan(); //Destructor
         Plan& operator= (Plan& other) = delete; //Unimplemented copy assignment operator
-        Plan&& operator= (Plan&& other) = delete; //Unimplemented move assignment operator
+        Plan& operator= (Plan&& other) = delete; //Unimplemented move assignment operator
         const int getlifeQualityScore() const;
         const int getEconomyScore() const;
         Plan* clone();

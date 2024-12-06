@@ -18,7 +18,7 @@ class Simulation {
         Simulation(Simulation&& other); //Move contructor
         ~Simulation(); //Destructor
         Simulation& operator=(const Simulation& other); //Copy assignment operator //TODO
-        Simulation&& operator=(const Simulation&& other); //Move assignment operator //TODO
+        Simulation& operator=(const Simulation&& other); //Move assignment operator //TODO
         void start();
         void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
         void addAction(BaseAction *action);

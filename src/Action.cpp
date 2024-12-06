@@ -18,7 +18,7 @@ using std::vector;
 
 using namespace std;
 
-extern Simulation* backup;
+extern Simulation* backup = nullptr;
 
 //----------Base Action----------
 
@@ -75,7 +75,7 @@ SimulateStep* SimulateStep::clone() const{
 //----------Add Plan----------
 
 //Constructor
-AddPlan::AddPlan(const string&name, const string& SelectionPolicy) : BaseAction(), settlementName(name), selectionPolicy(selectionPolicy) {}
+AddPlan::AddPlan(const string&name, const string& SelectionPolicy) : BaseAction(), settlementName(name), selectionPolicy(SelectionPolicy) {}
 
 //Methods
 void AddPlan::act(Simulation& s){
@@ -413,8 +413,11 @@ BackupSimulation::BackupSimulation() : BaseAction() {}
 
 void BackupSimulation::act(Simulation& s)
 {
-    backup = nullptr;
-    backup = &s;
+    if (backup == nullptr)
+    {
+        delete backup;
+    }
+    backup = new Simulation(s);
     
     s.addAction(this);
 }
@@ -444,6 +447,7 @@ void RestoreSimulation::act(Simulation& s)
     {
         s = *backup; //Assignment operator ?
     }
+    s.addAction(this);
 }
 
 RestoreSimulation* RestoreSimulation::clone() const{

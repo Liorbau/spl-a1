@@ -11,6 +11,7 @@
 #include "Settlement.h"
 #include "Simulation.h"
 #include "Auxiliary.h"
+#include "Action.h"
 
 using std::string;
 using std::vector;
@@ -62,32 +63,32 @@ Simulation::Simulation(const string &configFilePath) :
             else //=="2"
                 cat = FacilityCategory::ENVIRONMENT;
             
-            facilitiesOptions.emplace_back(new FacilityType(name, cat, price, lq_score, eco_score, env_score));
+            facilitiesOptions.push_back(FacilityType(name, cat, price, lq_score, eco_score, env_score));
         }
         else if (line_toVector.at(0) == "plan")
         {
-            Settlement* s;
-            for (int i=0 ; i<settlements.size() ; i++)
+            int index = -1;
+            for (size_t i=0 ; i<settlements.size() ; i++)
             {
                 if (settlements.at(i)->getName() == line_toVector.at(1))
                 {
-                    s = settlements[i];
+                    index = i;
                     break;
                 }
             }
             const string plan_type = line_toVector.at(2);
 
             if (plan_type == "nve")
-                plans.emplace_back(new Plan(planCounter, *s, new NaiveSelection(), facilitiesOptions));
+                plans.push_back(Plan(planCounter, *settlements.at(index), new NaiveSelection(), facilitiesOptions));
 
             else if (plan_type == "bal")
-                plans.emplace_back(new Plan(planCounter, *s, new BalancedSelection(0,0,0), facilitiesOptions));
+                plans.push_back(Plan(planCounter, *settlements.at(index), new BalancedSelection(0,0,0), facilitiesOptions));
 
             else if (plan_type == "eco")
-                plans.emplace_back(new Plan(planCounter, *s, new EconomySelection(), facilitiesOptions));
+                plans.push_back(Plan(planCounter, *settlements.at(index), new EconomySelection(), facilitiesOptions));
 
             else //=="env"
-                plans.emplace_back(new Plan(planCounter, *s, new SustainabilitySelection(), facilitiesOptions));
+                plans.push_back(Plan(planCounter, *settlements.at(index), new SustainabilitySelection(), facilitiesOptions));
 
             planCounter++;
 
@@ -102,7 +103,7 @@ Simulation::Simulation(Simulation& other) :
 {
     for (BaseAction* ba : other.actionsLog)
     {
-        //actionsLog.push_back(ba->clone()); //TODO
+        actionsLog.push_back(ba->clone()); 
     }
     for (Settlement* s : other.settlements)
     {
@@ -126,6 +127,8 @@ Simulation::Simulation(Simulation&& other) :
 
     other.actionsLog.clear(); 
     other.settlements.clear(); 
+    other.facilitiesOptions.clear();
+    other.plans.clear();
 }
 
 //Desctructor
@@ -150,15 +153,64 @@ Simulation& Simulation::operator=(const Simulation& other)
 {
     if (this != &other)
     {
+        isRunning = other.isRunning;
+        planCounter = other.planCounter;
+        plans.clear();
+        facilitiesOptions.clear();
+        plans = other.plans;
+        facilitiesOptions = other.facilitiesOptions;
+
+        for (BaseAction* ba : actionsLog)
+        {
+            delete ba;
+        }
+        for (Settlement* s : settlements)
+        {
+            delete s;
+        }
+        actionsLog.clear();
+        settlements.clear();
+
+        for (BaseAction* ba : other.actionsLog)
+        {
+            actionsLog.push_back(ba->clone());
+        }
+        for (Settlement* s : other.settlements)
+        {
+            settlements.push_back(s->clone());
+        }
         
     }
     return *this;
 }
 
 //Move assignment operator
-Simulation&& Simulation::operator=(const Simulation&& other)
+Simulation& Simulation::operator=(const Simulation&& other)
 {
-    //TODO
+    if (this != &other)
+    {
+        isRunning = other.isRunning;
+        planCounter = other.planCounter;
+
+        plans = move(other.plans);
+        facilitiesOptions = move(other.facilitiesOptions);   
+
+        for (BaseAction* ba : actionsLog)
+        {
+            delete ba;
+        }
+        for (Settlement* s : settlements)
+        {
+            delete s;
+        }
+        actionsLog.clear();
+        plans.clear();
+
+        actionsLog = move(other.actionsLog);
+        settlements = move(other.settlements);
+        
+    }
+    return *this;
 }
 
 //--------------- Methods ---------------
@@ -171,12 +223,12 @@ void Simulation::start()
 
 void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy)
 {
-    plans.emplace_back(new Plan(planCounter, settlement, selectionPolicy, facilitiesOptions));
+    plans.push_back(Plan(planCounter, settlement, selectionPolicy, facilitiesOptions));
 }
 
 void Simulation::addAction(BaseAction* action)
 {
-    actionsLog.push_back(action);
+    actionsLog.push_back(action->clone());
 }
 
 Settlement& Simulation::findSettlement (string name){
@@ -190,12 +242,12 @@ Settlement& Simulation::findSettlement (string name){
 
 
 bool Simulation::addSettlement(Settlement* s){
-    settlements.push_back(s);
+    settlements.push_back(s->clone());
     return true;
 }
 
 bool Simulation::addFacility(FacilityType f){
-    facilitiesOptions.emplace_back(f);
+    facilitiesOptions.push_back(f);
     return true;
 }
 

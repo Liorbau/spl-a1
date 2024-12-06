@@ -59,7 +59,7 @@ class EconomySelection: public SelectionPolicy {
 class SustainabilitySelection: public SelectionPolicy {
     public:
         SustainabilitySelection();
-        SustainabilitySelection::SustainabilitySelection(const SustainabilitySelection &other); //Copy constuctor
+        SustainabilitySelection(const SustainabilitySelection &other); //Copy constuctor
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         SustainabilitySelection *clone() const override;
