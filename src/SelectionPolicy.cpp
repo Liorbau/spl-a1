@@ -11,10 +11,6 @@ using namespace std;
 //Constructor
 NaiveSelection::NaiveSelection() : lastSelectedIndex(-1){}
 
-//Copy constructor
-NaiveSelection::NaiveSelection(const NaiveSelection &other) : 
-    lastSelectedIndex(other.lastSelectedIndex) {}
-
 //Methods
 const FacilityType& NaiveSelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
     if(facilitiesOptions.empty()){
@@ -43,10 +39,6 @@ string NaiveSelection::getType()
 //Constructor
 BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore)
 : LifeQualityScore(LifeQualityScore), EconomyScore(EconomyScore), EnvironmentScore(EnvironmentScore){}
-
-//Copy constructor
-BalancedSelection::BalancedSelection(const BalancedSelection &other) : 
-    LifeQualityScore(other.LifeQualityScore), EconomyScore(other.EconomyScore), EnvironmentScore(other.EnvironmentScore) {}
 
 //Methods
 const FacilityType& BalancedSelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
@@ -92,10 +84,6 @@ string BalancedSelection::getType()
 //Constructors
 EconomySelection::EconomySelection() : lastSelectedIndex(0){}
 
-//Copy constructor
-EconomySelection::EconomySelection(const EconomySelection &other) :
-    lastSelectedIndex(other.lastSelectedIndex) {}
-
 //Methods
 const FacilityType& EconomySelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
     if(facilitiesOptions.empty()){
@@ -127,10 +115,6 @@ string EconomySelection::getType()
 //----------Sustainability Selection Policy----------
 
 SustainabilitySelection::SustainabilitySelection() : lastSelectedIndex(0) {}
-
-//Copy constructor
-SustainabilitySelection::SustainabilitySelection(const SustainabilitySelection &other) :
-    lastSelectedIndex(other.lastSelectedIndex) {}
 
 //Methods
 const FacilityType& SustainabilitySelection::selectFacility(const vector<FacilityType>& facilitiesOptions){

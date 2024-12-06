@@ -28,7 +28,6 @@ class NaiveSelection: public SelectionPolicy {
 class BalancedSelection: public SelectionPolicy {
     public:
         BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore);
-        BalancedSelection(const SelectionPolicy &other); //Copy constructor
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         BalancedSelection *clone() const override;
@@ -44,7 +43,6 @@ class BalancedSelection: public SelectionPolicy {
 class EconomySelection: public SelectionPolicy {
     public:
         EconomySelection();
-        EconomySelection(const SelectionPolicy &other); //Copy constructor
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         EconomySelection *clone() const override;
@@ -59,7 +57,6 @@ class EconomySelection: public SelectionPolicy {
 class SustainabilitySelection: public SelectionPolicy {
     public:
         SustainabilitySelection();
-        SustainabilitySelection(const SustainabilitySelection &other); //Copy constuctor
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         SustainabilitySelection *clone() const override;
