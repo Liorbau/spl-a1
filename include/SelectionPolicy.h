@@ -15,7 +15,6 @@ class SelectionPolicy {
 class NaiveSelection: public SelectionPolicy {
     public:
         NaiveSelection();
-        NaiveSelection(const SelectionPolicy &other); //Copy constructor
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         NaiveSelection *clone() const override;
