@@ -1,23 +1,20 @@
-CC = g++
-CFLAGS = -g -Wall -Weffc++ -std=c++11 -Iinclude
-SRC = $(wildcard src/*.cpp)
-OBJ = $(SRC:.cpp=.o)
-EXEC = simulation
+all: link
 
-# Build the executable
-$(EXEC): $(OBJ)
-	$(CC) $(OBJ) -o $(EXEC)
+link: compile
+	@echo "linking object files"
+	g++ -o bin/main bin/main.o bin/Auxiliary.o bin/Settlement.o bin/Facility.o bin/SelectionPolicy.o bin/Plan.o bin/Simulation.o bin/Action.o
 
-# Compile .cpp to .o
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+compile: src/main.cpp src/Settlement.cpp
+	@echo "compiling source code"
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/main.o src/main.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Auxiliary.o src/Auxiliary.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Settlement.o src/Settlement.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Facility.o src/Facility.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/SelectionPolicy.o src/SelectionPolicy.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Plan.o src/Plan.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Simulation.o src/Simulation.cpp
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Action.o src/Action.cpp
 
-# Clean up build files
 clean:
-	rm -f $(OBJ) $(EXEC)
-
-# Run the program
-run: $(EXEC)
-	./$(EXEC) config.txt
-
-.PHONY: clean run
+	@echo "Cleaning bin directory"
+	rm -rf bin/*
