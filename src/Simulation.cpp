@@ -1,4 +1,3 @@
-#pragma once
 
 #include <string>
 #include <vector>
@@ -99,7 +98,7 @@ Simulation::Simulation(const string &configFilePath) :
 //Copy constructor
 Simulation::Simulation(Simulation& other) :
     isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
-    plans(other.plans), settlements(other.settlements), facilitiesOptions(other.facilitiesOptions)
+    plans(std::move(other.plans)), settlements(other.settlements), facilitiesOptions(std::move(other.facilitiesOptions))
 {
     for (BaseAction* ba : other.actionsLog)
     {
@@ -113,8 +112,8 @@ Simulation::Simulation(Simulation& other) :
 
 //Move constructor
 Simulation::Simulation(Simulation&& other) :
-    isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
-    plans(other.plans), settlements(other.settlements), facilitiesOptions(other.facilitiesOptions)
+    isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(std::move(other.actionsLog)),
+    plans(std::move(other.plans)), settlements(std::move(other.settlements)), facilitiesOptions(std::move(other.facilitiesOptions))
 {
     for (BaseAction* ba : other.actionsLog)
     {
@@ -317,6 +316,7 @@ Settlement& Simulation::findSettlement (string name){
             return s_ref;
         }
     }
+    throw std::runtime_error("Settlement does not exist");
 }
 
 bool Simulation::addSettlement(Settlement* s){
