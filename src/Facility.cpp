@@ -10,7 +10,7 @@ Facility::Facility(const FacilityType &type, const string &settlementName)
 
 //Copy constructor
 Facility::Facility(const Facility &other)
-: FacilityType(other.name, other.category, other.price, other.lifeQuality_score, other.economy_score, other.environment_score), settlementName(other.settlementName), timeLeft(other.price), status(other.status){}
+: FacilityType(other.name, other.category, other.price, other.lifeQuality_score, other.economy_score, other.environment_score), settlementName(other.settlementName), status(other.status), timeLeft(other.price){}
 
 //Methods
 
@@ -80,4 +80,9 @@ const string Facility::getStatusToString()
     {
         return "OPERATIONAL";
     }
+}
+
+Facility* Facility::clone()
+{
+    return new Facility(*this);
 }

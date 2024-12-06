@@ -19,12 +19,13 @@ Plan::Plan(Plan &other) :
    {
       for (Facility* f : other.facilities)
       {
-         facilities.emplace_back(f->clone());
+         facilities.push_back(f->clone());
       }
       for (Facility* f : other.underConstruction)
       {
-         underConstruction.emplace_back(f->clone());
+         underConstruction.push_back(f->clone());
       }
+      selectionPolicy = other.selectionPolicy->clone();
    }
 
 //Move constructor
@@ -38,6 +39,8 @@ Plan::Plan(Plan &&other) :
       for (Facility* f : other.underConstruction)
          f = nullptr;
       other.selectionPolicy = nullptr;
+      other.facilities.clear(); 
+      other.underConstruction.clear(); 
    }
 
 //Destructor
@@ -52,8 +55,9 @@ Plan::~Plan()
    {
       delete underConstruction[i];
    }
+   facilities.clear();
+   underConstruction.clear();
 }
-
 
 //Methods
 const int Plan::getlifeQualityScore() const
@@ -98,14 +102,14 @@ void Plan::step()
    }
 
    Facility *curr_facility;
-   
+   int index = -1;
    for (int i=0 ; i<underConstruction.size() ; i++)
    {
-      curr_facility = underConstruction[i];
-      curr_facility->reduceTime();
+      index = i;
+      underConstruction[index]->reduceTime();
       if (curr_facility->getStatus() == FacilityStatus::OPERATIONAL)
       {
-         facilities.push_back(curr_facility);
+         facilities.push_back(underConstruction[index]->clone());
          underConstruction.erase(underConstruction.begin() + i);
          i--;
       }
@@ -165,7 +169,7 @@ const vector<Facility*>& Plan::getFacilities() const
 
 void Plan::addFacility(Facility* facility)
 {
-   underConstruction.push_back(facility);
+   underConstruction.push_back(facility->clone());
 }
 
 const string Plan::toString() const
