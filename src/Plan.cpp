@@ -7,15 +7,14 @@
 
 //Constructor
 Plan::Plan(const int planId, const Settlement &settlement, SelectionPolicy *selectionPolicy, const vector<FacilityType> &facilityOptions) :
-   plan_id(planId), settlement(settlement), selectionPolicy(selectionPolicy), facilityOptions(facilityOptions),
-   status(PlanStatus::AVALIABLE), life_quality_score(0), economy_score(0), environment_score(0),
-   facilities(vector <Facility*>()), underConstruction(vector <Facility*>()) {}
+   plan_id(planId), settlement(settlement), selectionPolicy(selectionPolicy), status(PlanStatus::AVALIABLE),
+   facilities(vector <Facility*>()), underConstruction(vector <Facility*>()), facilityOptions(facilityOptions), life_quality_score(0), economy_score(0), environment_score(0){}
 
 //Copy constuctor
 Plan::Plan(Plan &other) :
    plan_id(other.plan_id), settlement(other.settlement), selectionPolicy(other.selectionPolicy->clone()),
-   status(other.status), life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score),
-   facilities(other.facilities), facilityOptions(other.facilityOptions)
+   status(other.status), facilities(other.facilities), underConstruction(other.underConstruction), facilityOptions(other.facilityOptions),
+   life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score)
    {
       for (Facility* f : other.facilities)
       {
@@ -30,28 +29,24 @@ Plan::Plan(Plan &other) :
 
 //Move constructor
 Plan::Plan(Plan &&other) :
-   plan_id(other.plan_id), settlement(other.settlement), selectionPolicy(other.selectionPolicy->clone()), facilityOptions(other.facilityOptions),
-   status(other.status), life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score),
-   facilities(other.facilities), underConstruction(other.underConstruction) 
+   plan_id(other.plan_id), settlement(other.settlement), selectionPolicy(other.selectionPolicy->clone()), 
+   status(other.status), facilities(other.facilities), underConstruction(other.underConstruction),
+   facilityOptions(other.facilityOptions), life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score)
    {
-      for (Facility* f : other.facilities)
-         f = nullptr;
-      for (Facility* f : other.underConstruction)
-         f = nullptr;
       other.selectionPolicy = nullptr;
-      other.facilities.clear(); 
-      other.underConstruction.clear(); 
+      other.facilities.clear();
+      other.underConstruction.clear();
    }
 
 //Destructor
 Plan::~Plan()
 {
    delete selectionPolicy;
-   for (int i=0 ; i<facilities.size() ; i++)
+   for (size_t i=0 ; i<facilities.size() ; i++)
    {
       delete facilities[i];
    }
-   for (int i=0 ; i<underConstruction.size() ; i++)
+   for (size_t i=0 ; i<underConstruction.size() ; i++)
    {
       delete underConstruction[i];
    }
@@ -96,14 +91,14 @@ void Plan::step()
    while (status == PlanStatus::AVALIABLE)
    {
       underConstruction.push_back(new Facility(selectionPolicy->selectFacility(facilityOptions), settlement.getName()));
-      if(underConstruction.size() == static_cast<int>(settlement.getType()) + 1){
+      if(underConstruction.size() == static_cast<size_t>(settlement.getType()) + 1){
          status = PlanStatus::BUSY;
       }
    }
 
-   Facility *curr_facility;
+   Facility *curr_facility = nullptr;
    int index = -1;
-   for (int i=0 ; i<underConstruction.size() ; i++)
+   for (size_t i=0 ; i<underConstruction.size() ; i++)
    {
       index = i;
       underConstruction[index]->reduceTime();
@@ -115,7 +110,7 @@ void Plan::step()
       }
    }
 
-   int type = -1;
+   size_t type = -1;
    if (settlement.getType() == SettlementType::VILLAGE)
       type = 0;
    else if (settlement.getType() == SettlementType::CITY)
@@ -178,19 +173,3 @@ const string Plan::toString() const
           "LifeQuality_Score: "+std::to_string(life_quality_score) +"\n" + "Economy_Score: "+std::to_string(economy_score) + "\n" +
           "Environment_Score: "+std::to_string(environment_score) +"\n \n";
 }           
-
-
-void Plan::printFacilities()
-{
-    for(Facility* fa : facilities)
-    {
-      std::cout << fa->getName() << std::endl;
-      std::cout << "OPERATIONAL" << std::endl;
-    }
-
-    for(Facility* fa : underConstruction)
-    {
-      std::cout << fa->getName() << std::endl;
-      std::cout << "UNDER_CONSTUCTIONS" << std::endl;
-    }
-}
