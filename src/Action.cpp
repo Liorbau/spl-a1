@@ -18,7 +18,7 @@ using std::vector;
 
 using namespace std;
 
-
+extern Simulation* backup;
 
 //----------Base Action----------
 
@@ -54,6 +54,7 @@ void SimulateStep::act(Simulation &s){
         s.step();
     }
     complete();
+    s.addAction(this);
 }
 
 const string SimulateStep::toString() const{
@@ -101,12 +102,17 @@ void AddPlan::act(Simulation& s){
 
         else{
             error("Cannot create this plan");
+            cout << getErrorMsg() +"\n";
         }
     }
 
     else{
             error("Cannot create this plan");
+            cout << getErrorMsg() +"\n";
+
     }
+    s.addAction(this);
+
 }
 
 const string AddPlan::toString() const{
@@ -138,7 +144,10 @@ void AddSettlement::act(Simulation& s){
 
     else{
             error("Settlement already exists");
+            cout << getErrorMsg() +"\n";
+
     }
+    s.addAction(this);
 }
 
 const string AddSettlement::toString() const{
@@ -181,7 +190,10 @@ void AddFacility::act(Simulation &simulation){
 
     else{
         error("Facility already exists");
+        cout << getErrorMsg() +"\n";
+
     }
+    simulation.addAction(this);
 }
 
 const string AddFacility::toString() const{
@@ -220,6 +232,8 @@ PrintPlanStatus::PrintPlanStatus(int planId): BaseAction(), planId(planId){}
 void PrintPlanStatus::act(Simulation &s){
     if(planId > s.plans_size() || planId < 0){
         error("Plan doesn't exist");
+        cout << getErrorMsg() +"\n";
+
     }
 
     else{
@@ -233,6 +247,7 @@ void PrintPlanStatus::act(Simulation &s){
         s.getPlan(planId).printFacilities();
 
     }
+    s.addAction(this);
 }
 
 const string PrintPlanStatus::toString() const{
@@ -268,6 +283,8 @@ ChangePlanPolicy::ChangePlanPolicy(const int planId, const string &newPolicy): B
 void ChangePlanPolicy::act(Simulation &s){
     if(s.getPlan(planId).getPolicy() == newPolicy){
         error("Cannot change selection policy");
+        cout << getErrorMsg() +"\n";
+
     }
 
     else{
@@ -301,8 +318,11 @@ void ChangePlanPolicy::act(Simulation &s){
 
         else{
             error("Cannot change selection policy");
+            cout << getErrorMsg() +"\n";
+
         }
     }
+    s.addAction(this);
 }
 
 const string ChangePlanPolicy::toString() const{
@@ -385,16 +405,53 @@ const string Close::toString() const{
     return "Simulation closed.";
 }
 
-/*
-
-class Close : public BaseAction {
-    public:
-        Close();
-        void act(Simulation &simulation) override;
-        Close *clone() const override;
-        const string toString() const override;
-    private:
 
 
-};*/
+// ---------- BackupSimulation ----------
+
+BackupSimulation::BackupSimulation() : BaseAction() {}
+
+void BackupSimulation::act(Simulation& s)
+{
+    backup = nullptr;
+    backup = &s;
+    
+    s.addAction(this);
+}
+
+BackupSimulation* BackupSimulation::clone() const{
+    return new BackupSimulation(*this);
+}
+
+const string BackupSimulation::toString() const{
+    return "Backup Successfull.";
+}
+
+
+
+// ---------- RestoreSimulation ----------
+
+RestoreSimulation::RestoreSimulation() : BaseAction() {}
+
+void RestoreSimulation::act(Simulation& s)
+{
+    if (backup == nullptr)
+    {
+        error("No backup available");
+        cout << getErrorMsg() + "\n";
+    }
+    else
+    {
+        s = *backup; //Assignment operator ?
+    }
+}
+
+RestoreSimulation* RestoreSimulation::clone() const{
+    return new RestoreSimulation(*this);
+}
+
+const string RestoreSimulation::toString() const{
+    return "Restore Successfull.";
+}
+
 

@@ -28,12 +28,10 @@ Simulation::Simulation(const string &configFilePath) :
     while (getline(MyReadFile, curr_line))
     {
         vector<string> line_toVector = Auxiliary::parseArguments(curr_line);
-        string type_toString = line_toVector.at(0);
-        if (type_toString == "settlement")
+        if (line_toVector.at(0) == "settlement")
         {
             const string name = line_toVector.at(1);
             SettlementType type;
-
             if (line_toVector.at(2) == "0")
                 type = SettlementType::VILLAGE;
 
@@ -45,7 +43,7 @@ Simulation::Simulation(const string &configFilePath) :
 
             settlements.push_back(new Settlement(name, type));
         }
-        else if (type_toString == "facility")
+        else if (line_toVector.at(0) == "facility")
         {
             const string name = line_toVector.at(1);
             const string category = line_toVector.at(2);
@@ -66,14 +64,14 @@ Simulation::Simulation(const string &configFilePath) :
             
             facilitiesOptions.emplace_back(new FacilityType(name, cat, price, lq_score, eco_score, env_score));
         }
-        else //=="plan"
+        else if (line_toVector.at(0) == "plan")
         {
             Settlement* s;
             for (int i=0 ; i<settlements.size() ; i++)
             {
                 if (settlements.at(i)->getName() == line_toVector.at(1))
                 {
-                    s = settlements.at(i);
+                    s = settlements[i];
                     break;
                 }
             }
@@ -106,17 +104,9 @@ Simulation::Simulation(Simulation& other) :
     {
         //actionsLog.push_back(ba->clone()); //TODO
     }
-    for (Plan p : other.plans)
-    {
-        plans.emplace_back(p.clone());
-    }
     for (Settlement* s : other.settlements)
     {
         settlements.push_back(s->clone());
-    }
-    for (FacilityType f : other.facilitiesOptions)
-    {
-        facilitiesOptions.emplace_back(f.clone());
     }
 }
 
@@ -129,18 +119,13 @@ Simulation::Simulation(Simulation&& other) :
     {
         ba = nullptr;
     }
-    for (Plan p : other.plans)
-    {
-        //TODO
-    }
     for (Settlement* s : other.settlements)
     {
         s = nullptr;
     }
-    for (FacilityType f : other.facilitiesOptions)
-    {
-        //TODO
-    }
+
+    other.actionsLog.clear(); 
+    other.settlements.clear(); 
 }
 
 //Desctructor
@@ -150,17 +135,9 @@ Simulation::~Simulation()
     {
         delete ba;
     }
-    for (Plan p : plans)
-    {
-        //TODO
-    }
     for (Settlement* s : settlements)
     {
         delete s;
-    }
-    for (FacilityType f : facilitiesOptions)
-    {
-        //TODO
     }
     actionsLog.clear();
     plans.clear();
@@ -171,7 +148,11 @@ Simulation::~Simulation()
 //Copy assignment operator
 Simulation& Simulation::operator=(const Simulation& other)
 {
-    //TODO
+    if (this != &other)
+    {
+        
+    }
+    return *this;
 }
 
 //Move assignment operator
@@ -266,11 +247,12 @@ void Simulation::open(){
 }
 
 void Simulation::close(){
-    isRunning = false;
     for (Plan p : plans)
     {
         p.toString();
     }
+    isRunning = false;
+
 }
 
 const vector<BaseAction*>& Simulation::getActionsLog(){
