@@ -13,7 +13,7 @@ enum class PlanStatus {
 class Plan {
     public:
         Plan(const int planId, const Settlement& settlement, SelectionPolicy* selectionPolicy, const vector<FacilityType>& facilityOptions);
-        Plan(Plan& other); //Copy constuctor
+        Plan(const Plan& other); //Copy constuctor
         Plan(Plan&& other); //Move contructor
         ~Plan(); //Destructor
         Plan& operator= (Plan& other) = delete; //Unimplemented copy assignment operator

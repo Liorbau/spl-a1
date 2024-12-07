@@ -1,5 +1,3 @@
-#pragma once
-
 #include <string>
 #include <vector>
 #include <fstream>
@@ -18,7 +16,7 @@ using std::vector;
 
 using namespace std;
 
-extern Simulation* backup = nullptr;
+extern Simulation* backup;
 
 //----------Base Action----------
 
