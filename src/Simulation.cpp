@@ -1,10 +1,10 @@
-#pragma once
 
 #include <string>
 #include <vector>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Facility.h"
 #include "Plan.h"
@@ -99,7 +99,7 @@ Simulation::Simulation(const string &configFilePath) :
 //Copy constructor
 Simulation::Simulation(Simulation& other) :
     isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
-    plans(other.plans), settlements(other.settlements), facilitiesOptions(other.facilitiesOptions)
+    plans(std::move(other.plans)), settlements(other.settlements), facilitiesOptions(std::move(other.facilitiesOptions))
 {
     for (BaseAction* ba : other.actionsLog)
     {
@@ -113,14 +113,14 @@ Simulation::Simulation(Simulation& other) :
 
 //Move constructor
 Simulation::Simulation(Simulation&& other) :
-    isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
-    plans(other.plans), settlements(other.settlements), facilitiesOptions(other.facilitiesOptions)
+    isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(std::move(other.actionsLog)),
+    plans(std::move(other.plans)), settlements(std::move(other.settlements)), facilitiesOptions(std::move(other.facilitiesOptions))
 {
-    for (BaseAction* ba : other.actionsLog)
+    for (BaseAction*& ba : other.actionsLog)
     {
         ba = nullptr;
     }
-    for (Settlement* s : other.settlements)
+    for (Settlement*& s : other.settlements)
     {
         s = nullptr;
     }
@@ -149,7 +149,7 @@ Simulation::~Simulation()
 }
 
 //Copy assignment operator
-Simulation& Simulation::operator=(const Simulation& other)
+Simulation& Simulation::operator=(Simulation& other)
 {
     if (this != &other)
     {
@@ -157,8 +157,13 @@ Simulation& Simulation::operator=(const Simulation& other)
         planCounter = other.planCounter;
         plans.clear();
         facilitiesOptions.clear();
-        plans = other.plans;
-        facilitiesOptions = other.facilitiesOptions;
+        for (Plan p : other.plans){
+            plans.push_back(p);
+        }
+        
+        for (FacilityType ft : other.facilitiesOptions){
+            facilitiesOptions.push_back(ft);
+        }
 
         for (BaseAction* ba : actionsLog)
         {
@@ -192,8 +197,13 @@ Simulation& Simulation::operator=(const Simulation&& other)
         isRunning = other.isRunning;
         planCounter = other.planCounter;
 
-        plans = move(other.plans);
-        facilitiesOptions = move(other.facilitiesOptions);   
+        for (Plan p : other.plans){
+            plans.push_back(p);
+        }
+
+        for (FacilityType ft : other.facilitiesOptions){
+            facilitiesOptions.push_back(ft);
+        }   
 
         for (BaseAction* ba : actionsLog)
         {
@@ -317,6 +327,7 @@ Settlement& Simulation::findSettlement (string name){
             return s_ref;
         }
     }
+    throw std::runtime_error("Settlement does not exist");
 }
 
 bool Simulation::addSettlement(Settlement* s){
@@ -338,15 +349,13 @@ bool Simulation::isSettlementExists(const string &name){
     return find;
 }
 
-bool Simulation::isFacilityExists(string name){
-    bool find = false;
-    for (FacilityType fa : facilitiesOptions){
-        if (fa.getName() == name){
-            find = true;
-            break;
+bool Simulation::isFacilityExists(const string &name) {
+    for (const FacilityType &fa : facilitiesOptions) {
+        if (fa.getName() == name) {
+            return true;
         }
     }
-    return find;
+    return false;
 }
 
 const int Simulation::plans_size ()

@@ -17,7 +17,7 @@ class Simulation {
         Simulation(Simulation& other); //Copy constuctor
         Simulation(Simulation&& other); //Move contructor
         ~Simulation(); //Destructor
-        Simulation& operator=(const Simulation& other); //Copy assignment operator //TODO
+        Simulation& operator=(Simulation& other); //Copy assignment operator //TODO
         Simulation& operator=(const Simulation&& other); //Move assignment operator //TODO
         void start();
         void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
@@ -26,7 +26,7 @@ class Simulation {
         bool addFacility(FacilityType facility);
         bool isSettlementExists(const string &settlementName);
         Settlement& findSettlement (string name); //Helper method
-        bool isFacilityExists (string name); //Helper method
+        bool isFacilityExists (const string &name); //Helper method
         const int plans_size ();
         Settlement &getSettlement(const string &settlementName);
         Plan &getPlan(const int planID);

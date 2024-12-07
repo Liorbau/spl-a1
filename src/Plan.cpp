@@ -11,7 +11,7 @@ Plan::Plan(const int planId, const Settlement &settlement, SelectionPolicy *sele
    facilities(vector <Facility*>()), underConstruction(vector <Facility*>()), facilityOptions(facilityOptions), life_quality_score(0), economy_score(0), environment_score(0){}
 
 //Copy constuctor
-Plan::Plan(Plan &other) :
+Plan::Plan(const Plan &other) :
    plan_id(other.plan_id), settlement(other.settlement), selectionPolicy(other.selectionPolicy->clone()),
    status(other.status), facilities(other.facilities), underConstruction(other.underConstruction), facilityOptions(other.facilityOptions),
    life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score)
