@@ -35,6 +35,29 @@ FacilityCategory FacilityType::getCategory() const{
     return category;
 }    
 
+const string FacilityType::toString()
+{
+    std::string cur_category;
+    if (category == FacilityCategory::LIFE_QUALITY){
+        cur_category = "Life Quality";
+    }
+
+    else if(category == FacilityCategory::ECONOMY){
+        cur_category = "Economy";
+    }
+
+    else{
+        cur_category = "Environment";
+    }
+
+    return "Facility name: " + name +
+           "\nCategory: " + cur_category +
+            "\nPrice: " + std::to_string(price) +
+           "\nLife Quality Score: " + std::to_string(lifeQuality_score) +
+           "\nEconomy Score: " + std::to_string(economy_score) +
+           "\nEnvironment Score: " + std::to_string(environment_score);
+}
+
 //---------- Facility ----------
 //Default constructors
 Facility::Facility(const string &name, const string &settlementName, const FacilityCategory category, const int price, const int lifeQuality_score, const int economy_score, const int environment_score)
@@ -81,27 +104,13 @@ const FacilityStatus& Facility::getStatus() const{
 }
 
 const string Facility::toString() const{
-    std::string cur_category;
-    if (category == FacilityCategory::LIFE_QUALITY){
-        cur_category = "Life Quality";
+    string stat = "BUSY";
+    if (status == FacilityStatus::OPERATIONAL)
+    {
+        stat = "OPERATIONAL";
     }
-
-    else if(category == FacilityCategory::ECONOMY){
-        cur_category = "Economy";
-    }
-
-    else{
-        cur_category = "Environment";
-    }
-
-    return "Facility name: " + name +
-           "\nSettlement name: " + settlementName +  
-           "\nCategory: " + cur_category +
-           "\nLife Quality Score: " + std::to_string(lifeQuality_score) +
-           "\nEconomy Score: " + std::to_string(economy_score) +
-           "\nEnvironment Score: " + std::to_string(environment_score) +
-           "\nStatus: " + (status == FacilityStatus::UNDER_CONSTRUCTIONS ? "Under Construction" : "Operational") +
-           "\nTime Left: " + std::to_string(timeLeft);
+    return "Facility name: " + name + "\n" +
+           "Status: " + stat + "\n";
 }
 
 const string Facility::getStatusToString()

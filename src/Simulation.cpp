@@ -96,6 +96,14 @@ Simulation::Simulation(const string &configFilePath) :
     }
 }
 
+void Simulation::printFacilities()
+{
+    for (FacilityType f : facilitiesOptions)
+    {
+        cout << f.toString() +"\n \n";
+    }
+}
+
 //Copy constructor
 Simulation::Simulation(Simulation& other) :
     isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
@@ -230,7 +238,7 @@ void Simulation::start(){
     cout << "The simulation has started" << endl;
 
     while (isRunning){
-        cout << "Enter an action: " << endl;
+        cout << "\n ** Enter an action: \n\n";
         string action;
         getline(cin, action);
         vector<string> split_action = Auxiliary::parseArguments(action);
@@ -314,6 +322,7 @@ void Simulation::start(){
 
 void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy){
     plans.push_back(Plan(planCounter, settlement, selectionPolicy, facilitiesOptions));
+    planCounter++;
 }
 
 void Simulation::addAction(BaseAction* action){
@@ -363,7 +372,6 @@ const int Simulation::plans_size ()
     return plans.size();
 }
 
-
 Settlement& Simulation::getSettlement(const string &name){
     for (Settlement* s : settlements){
         if (s->getName() == name)
@@ -373,11 +381,11 @@ Settlement& Simulation::getSettlement(const string &name){
 }
 
 Plan& Simulation::getPlan(const int id){
-    return plans.at(id);
+    return plans[id];
 }
 
 void Simulation::step(){
-    for (Plan p :plans)
+    for (Plan &p :plans)
         p.step();
 }
 
@@ -388,7 +396,7 @@ void Simulation::open(){
 void Simulation::close(){
     for (Plan p : plans)
     {
-        p.toString();
+        p.printPlan();
     }
     isRunning = false;
 }
