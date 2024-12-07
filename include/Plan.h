@@ -30,7 +30,7 @@ class Plan {
         void printFacilities();
         const vector<Facility*>& getFacilities() const;
         void addFacility(Facility* facility);
-        const string toString() const;
+        void printPlan();
         const string id_toString();
 
     private:
