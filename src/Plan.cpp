@@ -88,39 +88,38 @@ const string Plan::getSettlementName()
 
 void Plan::step()
 {
+   int cap;
+      if (settlement.getType() == SettlementType::VILLAGE) cap = 1;
+      else if (settlement.getType() == SettlementType::CITY) cap = 2;
+      else cap = 3;
+
    while (status == PlanStatus::AVALIABLE)
    {
       underConstruction.push_back(new Facility(selectionPolicy->selectFacility(facilityOptions), settlement.getName()));
-      if(underConstruction.size() == static_cast<size_t>(settlement.getType()) + 1){
+
+      if(static_cast<int>(underConstruction.size()) == cap){
          status = PlanStatus::BUSY;
       }
    }
 
-   Facility *curr_facility = nullptr;
-   int index = -1;
-   for (size_t i=0 ; i<underConstruction.size() ; i++)
+   for (int i=0 ; i<static_cast<int>(underConstruction.size()) ; i++)
    {
-      index = i;
-      underConstruction[index]->reduceTime();
-      if (curr_facility->getStatus() == FacilityStatus::OPERATIONAL)
+      underConstruction[i]->reduceTime();
+      
+      if (underConstruction[i]->getStatus() == FacilityStatus::OPERATIONAL)
       {
-         facilities.push_back(underConstruction[index]->clone());
+         life_quality_score += underConstruction[i]->getLifeQualityScore();
+         environment_score += underConstruction[i]->getEnvironmentScore();
+         economy_score += underConstruction[i]->getEconomyScore();
+         facilities.push_back(underConstruction[i]->clone());
          underConstruction.erase(underConstruction.begin() + i);
          i--;
       }
    }
 
-   size_t type = -1;
-   if (settlement.getType() == SettlementType::VILLAGE)
-      type = 0;
-   else if (settlement.getType() == SettlementType::CITY)
-      type = 1;
-   else //if (settlement.getType() == SettlementType::METROPOLIS)
-      type = 2;
-   if (underConstruction.size() == type)
-      status = PlanStatus::BUSY;
-   else
-      status = PlanStatus::AVALIABLE;
+   if(static_cast<int>(underConstruction.size()) < cap){
+         status = PlanStatus::AVALIABLE;
+   }
 }
 
 const string Plan::getPolicy()
@@ -167,9 +166,31 @@ void Plan::addFacility(Facility* facility)
    underConstruction.push_back(facility->clone());
 }
 
-const string Plan::toString() const
+void Plan::printPlan() 
 {
-   return "PlanID: "+ std::to_string(plan_id) +"\n" + "SettlementName: "+settlement.getName() + "\n" + 
-          "LifeQuality_Score: "+std::to_string(life_quality_score) +"\n" + "Economy_Score: "+std::to_string(economy_score) + "\n" +
-          "Environment_Score: "+std::to_string(environment_score) +"\n \n";
+   string s ="";
+   if (status == PlanStatus::AVALIABLE)
+      s = "AVAILABLE";
+   else
+      s = "BUSY";
+   string p = "";
+   std::cout << "PlanID: "+ std::to_string(plan_id) +"\n" ; 
+   std::cout << "SettlementName: "+ settlement.getName() +"\n" ; 
+   std::cout << "PlanStatus: "+ s +"\n" ; 
+   std::cout << "SelectionPolicy "+ getPolicy()+ "\n";
+   std::cout << "LifeQuality_Score: "+ std::to_string(life_quality_score) +"\n" ; 
+   std::cout << "Economy_Score: "+ std::to_string(economy_score) +"\n" ; 
+   std::cout << "Environment_Score: "+ std::to_string(environment_score) +"\n" ; 
+                     
+   for (Facility* f : facilities)
+   {
+      std::cout << "FacilityName: " + f->getName() + "\n" ;
+      std::cout << "FacilityStatus: OPERATIONAL \n";
+   }
+   for (Facility* f : underConstruction)
+   {
+      std::cout << "FacilityName: " + f->getName() + "\n" ;
+      std::cout << "FacilityStatus: UNDER_CONSTRUCTION \n";
+   }
+
 }           
