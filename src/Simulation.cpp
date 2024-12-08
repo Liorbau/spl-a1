@@ -111,11 +111,11 @@ Simulation::Simulation(Simulation& other) :
 {
     for (BaseAction* ba : other.actionsLog)
     {
-        actionsLog.push_back(ba->clone()); 
+        actionsLog.push_back(ba); 
     }
     for (Settlement* s : other.settlements)
     {
-        settlements.push_back(s->clone());
+        settlements.push_back(s);
     }
 }
 
@@ -186,11 +186,11 @@ Simulation& Simulation::operator=(Simulation& other)
 
         for (BaseAction* ba : other.actionsLog)
         {
-            actionsLog.push_back(ba->clone());
+            actionsLog.push_back(ba);
         }
         for (Settlement* s : other.settlements)
         {
-            settlements.push_back(s->clone());
+            settlements.push_back(s);
         }
         
     }

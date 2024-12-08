@@ -95,11 +95,24 @@ void Plan::step()
 
    while (status == PlanStatus::AVALIABLE)
    {
-      life_quality_score += selectionPolicy->selectFacility(facilityOptions).getLifeQualityScore();
-      environment_score += selectionPolicy->selectFacility(facilityOptions).getEnvironmentScore();
-      economy_score += selectionPolicy->selectFacility(facilityOptions).getEconomyScore();
-      underConstruction.push_back(new Facility(selectionPolicy->selectFacility(facilityOptions), settlement.getName()));
-      
+      string type = selectionPolicy->getType();
+      if (type == "bal")
+      {
+         BalancedSelection pol = BalancedSelection(life_quality_score, economy_score, environment_score);
+         FacilityType toBuild = pol.selectFacility(facilityOptions);
+         life_quality_score = life_quality_score + toBuild.getLifeQualityScore(); 
+         economy_score = economy_score + toBuild.getEconomyScore();
+         environment_score = environment_score + toBuild.getEnvironmentScore();
+         underConstruction.push_back(new Facility(toBuild, settlement.getName()));
+      }
+      else
+      {
+         FacilityType toBuild = selectionPolicy->selectFacility(facilityOptions);
+         life_quality_score = life_quality_score + toBuild.getLifeQualityScore(); 
+         economy_score = economy_score + toBuild.getEconomyScore();
+         environment_score = environment_score + toBuild.getEnvironmentScore();
+         underConstruction.push_back(new Facility(toBuild, settlement.getName()));
+      }
       if(static_cast<int>(underConstruction.size()) == cap){
          status = PlanStatus::BUSY;
       }
@@ -177,7 +190,7 @@ void Plan::printPlan()
    std::cout << "PlanID: "+ std::to_string(plan_id) +"\n" ; 
    std::cout << "SettlementName: "+ settlement.getName() +"\n" ; 
    std::cout << "PlanStatus: "+ s +"\n" ; 
-   std::cout << "SelectionPolicy "+ getPolicy()+ "\n";
+   std::cout << "SelectionPolicy: "+ getPolicy()+ "\n";
    std::cout << "LifeQuality_Score: "+ std::to_string(life_quality_score) +"\n" ; 
    std::cout << "Economy_Score: "+ std::to_string(economy_score) +"\n" ; 
    std::cout << "Environment_Score: "+ std::to_string(environment_score) +"\n" ; 

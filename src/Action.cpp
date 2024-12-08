@@ -388,7 +388,7 @@ void RestoreSimulation::act(Simulation& s)
     }
     else
     {
-        s = *backup; //Assignment operator ?
+        s = *backup;
     }
     s.addAction(this);
 }
