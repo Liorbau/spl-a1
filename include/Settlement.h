@@ -10,6 +10,7 @@ enum class SettlementType {
     VILLAGE,
     CITY,
     METROPOLIS,
+    NOTF //not found
 };
 
 class Settlement {

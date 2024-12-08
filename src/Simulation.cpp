@@ -197,6 +197,11 @@ Simulation& Simulation::operator=(Simulation& other)
     return *this;
 }
 
+Simulation* Simulation::clone()
+{
+    return new Simulation(*this);
+}
+
 //Move assignment operator
 Simulation& Simulation::operator=(const Simulation&& other)
 {
@@ -265,9 +270,11 @@ void Simulation::start(){
                 set_type = SettlementType::CITY;
             }
 
-            else{ // (split_action[2] == "2")
+            else if (split_action[2] == "2") {
                 set_type = SettlementType::METROPOLIS;
             }
+            else
+                set_type = SettlementType::NOTF;
 
             AddSettlement(split_action[1], set_type).act(*this);
         }

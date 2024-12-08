@@ -20,6 +20,7 @@ class Simulation {
         Simulation& operator=(Simulation& other); //Copy assignment operator //TODO
         Simulation& operator=(const Simulation&& other); //Move assignment operator //TODO
         void start();
+        Simulation* clone();
         void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
         void addAction(BaseAction *action);
         bool addSettlement(Settlement *settlement);
