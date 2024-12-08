@@ -2,7 +2,7 @@ all: link
 
 link: compile
 	@echo "linking object files"
-	g++ -o bin/main bin/main.o bin/Auxiliary.o bin/Settlement.o bin/Facility.o bin/SelectionPolicy.o bin/Plan.o bin/Simulation.o bin/Action.o
+	g++ -o bin/simulation bin/main.o bin/Auxiliary.o bin/Settlement.o bin/Facility.o bin/SelectionPolicy.o bin/Plan.o bin/Simulation.o bin/Action.o
 
 compile: src/main.cpp src/Settlement.cpp
 	@echo "compiling source code"
