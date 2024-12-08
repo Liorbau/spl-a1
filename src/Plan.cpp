@@ -8,12 +8,12 @@
 //Constructor
 Plan::Plan(const int planId, const Settlement &settlement, SelectionPolicy *selectionPolicy, const vector<FacilityType> &facilityOptions) :
    plan_id(planId), settlement(settlement), selectionPolicy(selectionPolicy), status(PlanStatus::AVALIABLE),
-   facilities(vector <Facility*>()), underConstruction(vector <Facility*>()), facilityOptions(facilityOptions), life_quality_score(0), economy_score(0), environment_score(0){}
+   facilities(), underConstruction(), facilityOptions(facilityOptions), life_quality_score(0), economy_score(0), environment_score(0){}
 
 //Copy constuctor
 Plan::Plan(const Plan &other) :
    plan_id(other.plan_id), settlement(other.settlement), selectionPolicy(other.selectionPolicy->clone()),
-   status(other.status), facilities(other.facilities), underConstruction(other.underConstruction), facilityOptions(other.facilityOptions),
+   status(other.status), facilities(), underConstruction(), facilityOptions(other.facilityOptions),
    life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score)
    {
       for (Facility* f : other.facilities)
@@ -24,12 +24,27 @@ Plan::Plan(const Plan &other) :
       {
          underConstruction.push_back(f->clone());
       }
-      selectionPolicy = other.selectionPolicy->clone();
+   }
+
+   //Copy constructor 2 
+   Plan::Plan(const Plan &other, const Settlement &s):
+   plan_id(other.plan_id), settlement(s), selectionPolicy(other.selectionPolicy->clone()),
+   status(other.status), facilities(), underConstruction(), facilityOptions(other.facilityOptions),
+   life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score)
+   {
+      for (Facility* f : other.facilities)
+      {
+         facilities.push_back(f->clone());
+      }
+      for (Facility* f : other.underConstruction)
+      {
+         underConstruction.push_back(f->clone());
+      }  
    }
 
 //Move constructor
 Plan::Plan(Plan &&other) :
-   plan_id(other.plan_id), settlement(other.settlement), selectionPolicy(other.selectionPolicy->clone()), 
+   plan_id(other.plan_id), settlement(other.settlement), selectionPolicy(other.selectionPolicy), 
    status(other.status), facilities(other.facilities), underConstruction(other.underConstruction),
    facilityOptions(other.facilityOptions), life_quality_score(other.life_quality_score), economy_score(other.economy_score), environment_score(other.environment_score)
    {
@@ -95,7 +110,8 @@ void Plan::step()
 
    while (status == PlanStatus::AVALIABLE)
    {
-      underConstruction.push_back(new Facility(selectionPolicy->selectFacility(facilityOptions), settlement.getName()));
+      Facility *new_fa = new Facility(selectionPolicy->selectFacility(facilityOptions), settlement.getName());
+      underConstruction.push_back(new_fa);
 
       if(static_cast<int>(underConstruction.size()) == cap){
          status = PlanStatus::BUSY;
@@ -111,7 +127,7 @@ void Plan::step()
          life_quality_score += underConstruction[i]->getLifeQualityScore();
          environment_score += underConstruction[i]->getEnvironmentScore();
          economy_score += underConstruction[i]->getEconomyScore();
-         facilities.push_back(underConstruction[i]->clone());
+         facilities.push_back(underConstruction[i]);
          underConstruction.erase(underConstruction.begin() + i);
          i--;
       }

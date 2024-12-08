@@ -106,16 +106,22 @@ void Simulation::printFacilities()
 
 //Copy constructor
 Simulation::Simulation(Simulation& other) :
-    isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
-    plans(std::move(other.plans)), settlements(other.settlements), facilitiesOptions(std::move(other.facilitiesOptions))
+    isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(),
+    plans(), settlements(), facilitiesOptions(other.facilitiesOptions)
 {
     for (BaseAction* ba : other.actionsLog)
     {
         actionsLog.push_back(ba->clone()); 
     }
+
     for (Settlement* s : other.settlements)
     {
         settlements.push_back(s->clone());
+    }
+
+    for (Plan p : other.plans)
+    {
+        plans.push_back(Plan(p, this->getSettlement(p.getSettlementName())));
     }
 }
 

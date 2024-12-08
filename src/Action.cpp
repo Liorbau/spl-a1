@@ -129,7 +129,9 @@ AddSettlement::AddSettlement(const string &name,SettlementType type) : BaseActio
 //Methods
 void AddSettlement::act(Simulation& s){
     if (!s.isSettlementExists(settlementName)){
-        s.addSettlement(new Settlement(settlementName, settlementType));
+        Settlement* new_set = new Settlement(settlementName, settlementType);
+        s.addSettlement(new_set);
+        delete new_set;
         complete();
     }
 
@@ -344,16 +346,15 @@ const string Close::toString() const{
 
 // ---------- BackupSimulation ----------
 
+//Constructor
 BackupSimulation::BackupSimulation() : BaseAction() {}
 
-void BackupSimulation::act(Simulation& s)
-{
-    if (backup == nullptr)
-    {
-        delete backup;
-    }
+
+//Methods
+void BackupSimulation::act(Simulation& s){
+    delete backup;
     backup = new Simulation(s);
-    cout << "Backup Successfull \n";
+    BaseAction::complete();
     s.addAction(this);
 }
 
@@ -362,26 +363,29 @@ BackupSimulation* BackupSimulation::clone() const{
 }
 
 const string BackupSimulation::toString() const{
-    return "Backup Successfull";
+    return "Backup COMPLETED";
 }
 
 
 
 // ---------- RestoreSimulation ----------
 
+//Constructor
 RestoreSimulation::RestoreSimulation() : BaseAction() {}
 
+//Methods
 void RestoreSimulation::act(Simulation& s)
 {
-    if (backup == nullptr)
-    {
+    if (backup == nullptr){
         error("No backup available");
         cout << getErrorMsg() + "\n";
     }
-    else
-    {
+
+    else{
         s = *backup; //Assignment operator ?
     }
+
+    BaseAction::complete();
     s.addAction(this);
 }
 

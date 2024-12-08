@@ -14,6 +14,7 @@ class Plan {
     public:
         Plan(const int planId, const Settlement& settlement, SelectionPolicy* selectionPolicy, const vector<FacilityType>& facilityOptions);
         Plan(const Plan& other); //Copy constuctor
+        Plan(const Plan& other, const Settlement& s); //Copy constructor 2
         Plan(Plan&& other); //Move contructor
         ~Plan(); //Destructor
         Plan& operator= (Plan& other) = delete; //Unimplemented copy assignment operator
