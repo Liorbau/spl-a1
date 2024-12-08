@@ -95,11 +95,11 @@ void Plan::step()
 
    while (status == PlanStatus::AVALIABLE)
    {
-      FacilityType f = selectionPolicy->selectFacility(facilityOptions);
-      underConstruction.push_back(new Facility(f, settlement.getName()));
-      life_quality_score += f.getLifeQualityScore();
-      environment_score += f.getEnvironmentScore();
-      economy_score += f.getEconomyScore();
+      life_quality_score += selectionPolicy->selectFacility(facilityOptions).getLifeQualityScore();
+      environment_score += selectionPolicy->selectFacility(facilityOptions).getEnvironmentScore();
+      economy_score += selectionPolicy->selectFacility(facilityOptions).getEconomyScore();
+      underConstruction.push_back(new Facility(selectionPolicy->selectFacility(facilityOptions), settlement.getName()));
+      
       if(static_cast<int>(underConstruction.size()) == cap){
          status = PlanStatus::BUSY;
       }

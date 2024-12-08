@@ -45,14 +45,63 @@ const FacilityType& BalancedSelection::selectFacility(const vector<FacilityType>
     if(facilitiesOptions.empty()){
         throw std::runtime_error("No facility options");
     }
-/*
-    for (int i=0 ; i<static_cast<int>(facilitiesOptions.size()) ; i++)
-    {
 
+    int selectionIndex = 0;
+    int i = 0;
+    for (FacilityType f : facilitiesOptions)
+    {
+        int potential_lq = LifeQualityScore + facilitiesOptions.at(selectionIndex).getLifeQualityScore();
+        int potential_eco = EconomyScore + facilitiesOptions.at(selectionIndex).getEconomyScore();
+        int potential_env = EnvironmentScore + facilitiesOptions.at(selectionIndex).getEnvironmentScore();
+        int max = std::max(potential_lq, std::max(potential_eco, potential_env));
+        int min = std::min(potential_lq, std::min(potential_eco, potential_env));
+        int distance = max-min;
+
+        int potential_lq_competiton = LifeQualityScore + facilitiesOptions.at(i).getLifeQualityScore();
+        int potential_eco_competiton = EconomyScore + facilitiesOptions.at(i).getEconomyScore();
+        int potential_env_competiton = EnvironmentScore + facilitiesOptions.at(i).getEnvironmentScore();
+        int max_competiton = std::max(potential_lq_competiton, std::max(potential_eco_competiton, potential_env_competiton));
+        int min_competiton = std::min(potential_lq_competiton, std::min(potential_eco_competiton, potential_env_competiton));
+        int distance_competiton = max_competiton-min_competiton;
+
+        if (distance_competiton < distance)
+            selectionIndex = i;
+        i++;
+    }
+    return facilitiesOptions.at(selectionIndex);
+
+    /*
+    for (int i=0 ; i<(static_cast<int>(facilitiesOptions.size())) ; i++)
+    {
+        int potential_lq = LifeQualityScore + facilitiesOptions.at(i).getLifeQualityScore();
+        int potential_eco = EconomyScore + facilitiesOptions.at(i).getEconomyScore();
+        int potential_env = EnvironmentScore + facilitiesOptions.at(i).getEnvironmentScore();
+        int max = std::max(potential_lq, std::max(potential_eco, potential_env));
+        int min = std::min(potential_lq, std::min(potential_eco, potential_env));
+        int distance = max-min;
+        selectionIndex = i;
+        for (int j=0 ; j<(static_cast<int>(facilitiesOptions.size())) ; j++)
+        {
+            if (i != j)
+            {
+            int potential_lq_competiton = LifeQualityScore + facilitiesOptions.at(i).getLifeQualityScore();
+            int potential_eco_competiton = EconomyScore + facilitiesOptions.at(i).getEconomyScore();
+            int potential_env_competiton = EnvironmentScore + facilitiesOptions.at(i).getEnvironmentScore();
+            int max_competiton = std::max(potential_lq_competiton, std::max(potential_eco_competiton, potential_env_competiton));
+            int min_competiton = std::min(potential_lq_competiton, std::min(potential_eco_competiton, potential_env_competiton));
+            int distance_competiton = max_competiton-min_competiton;
+            if (distance_competiton < distance)
+            {
+                distance = distance_competiton;
+                selectionIndex = j;
+            }
+            }
+        }
     }*/
+    return facilitiesOptions.at(selectionIndex);
 
     
-    int cur_lq = facilitiesOptions[0].getLifeQualityScore() + LifeQualityScore;
+   /* int cur_lq = facilitiesOptions[0].getLifeQualityScore() + LifeQualityScore;
     int cur_eco = facilitiesOptions[0].getEconomyScore() + EconomyScore;
     int cur_env = facilitiesOptions[0].getEnvironmentScore() + EnvironmentScore;
     
@@ -69,7 +118,7 @@ const FacilityType& BalancedSelection::selectFacility(const vector<FacilityType>
             selected_fac_index = i;
         }
     }
-    return facilitiesOptions[selected_fac_index];
+    return facilitiesOptions[selected_fac_index];*/
 }
 
 const string BalancedSelection::toString() const{
