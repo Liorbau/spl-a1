@@ -107,7 +107,7 @@ void Simulation::printFacilities()
 //Copy constructor
 Simulation::Simulation(Simulation& other) :
     isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
-    plans(std::move(other.plans)), settlements(other.settlements), facilitiesOptions(std::move(other.facilitiesOptions))
+    plans(other.plans), settlements(other.settlements), facilitiesOptions(other.facilitiesOptions)
 {
     for (BaseAction* ba : other.actionsLog)
     {
