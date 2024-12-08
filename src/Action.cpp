@@ -360,7 +360,7 @@ void BackupSimulation::act(Simulation& s)
     {
         delete backup;
     }
-    backup = s.clone();
+    backup = new Simulation(s);
     cout << "Backup Successfull \n";
     s.addAction(this);
 }

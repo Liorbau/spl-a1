@@ -45,7 +45,13 @@ const FacilityType& BalancedSelection::selectFacility(const vector<FacilityType>
     if(facilitiesOptions.empty()){
         throw std::runtime_error("No facility options");
     }
+/*
+    for (int i=0 ; i<static_cast<int>(facilitiesOptions.size()) ; i++)
+    {
 
+    }*/
+
+    
     int cur_lq = facilitiesOptions[0].getLifeQualityScore() + LifeQualityScore;
     int cur_eco = facilitiesOptions[0].getEconomyScore() + EconomyScore;
     int cur_env = facilitiesOptions[0].getEnvironmentScore() + EnvironmentScore;
@@ -82,7 +88,7 @@ string BalancedSelection::getType()
 //----------Economy Selection Policy----------
 
 //Constructors
-EconomySelection::EconomySelection() : lastSelectedIndex(0){}
+EconomySelection::EconomySelection() : lastSelectedIndex(-1){}
 
 //Methods
 const FacilityType& EconomySelection::selectFacility(const vector<FacilityType>& facilitiesOptions){
@@ -90,13 +96,16 @@ const FacilityType& EconomySelection::selectFacility(const vector<FacilityType>&
         throw std::runtime_error("No facility options");
     }
 
+    lastSelectedIndex++;
+    if (lastSelectedIndex == static_cast<int>(facilitiesOptions.size()))
+        lastSelectedIndex = 0;
     FacilityCategory cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
 
-    while(cur_category != FacilityCategory::ECONOMY){
+    while(cur_category != FacilityCategory::ECONOMY)
+    {
         lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
         cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
     }
-
     return facilitiesOptions.at(lastSelectedIndex);
 }
 
@@ -122,13 +131,16 @@ const FacilityType& SustainabilitySelection::selectFacility(const vector<Facilit
         throw std::runtime_error("No facility options");
     }
 
+    lastSelectedIndex++;
+    if (lastSelectedIndex == static_cast<int>(facilitiesOptions.size()))
+        lastSelectedIndex = 0;
     FacilityCategory cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
 
-    while(cur_category != FacilityCategory::ENVIRONMENT){
+    while(cur_category != FacilityCategory::ENVIRONMENT)
+    {
         lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
         cur_category = facilitiesOptions.at(lastSelectedIndex).getCategory();
     }
-
     return facilitiesOptions.at(lastSelectedIndex);
 }
 
