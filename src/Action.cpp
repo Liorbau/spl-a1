@@ -128,15 +128,23 @@ AddSettlement::AddSettlement(const string &name,SettlementType type) : BaseActio
 
 //Methods
 void AddSettlement::act(Simulation& s){
-    if (!s.isSettlementExists(settlementName)){
-        s.addSettlement(new Settlement(settlementName, settlementType));
-        complete();
+    if (!(settlementType == SettlementType::NOTF))
+    {
+        if (!s.isSettlementExists(settlementName)){
+            s.addSettlement(new Settlement(settlementName, settlementType));
+            complete();
+        }
+
+        else{
+                error("Settlement already exists");
+                cout << getErrorMsg() +"\n";
+
+        }
     }
-
-    else{
-            error("Settlement already exists");
-            cout << getErrorMsg() +"\n";
-
+    else
+    {
+        error("Settlement type invalid");
+        cout << getErrorMsg() +"\n";
     }
     s.addAction(this);
 }
@@ -352,7 +360,7 @@ void BackupSimulation::act(Simulation& s)
     {
         delete backup;
     }
-    backup = new Simulation(s);
+    backup = s.clone();
     cout << "Backup Successfull \n";
     s.addAction(this);
 }
