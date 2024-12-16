@@ -109,16 +109,24 @@ const FacilityType& BalancedSelection::selectFacility(const vector<FacilityType>
     int selected_fac_index = 0;
 
     for(size_t i = 1; i < facilitiesOptions.size(); i++){
-        cur_lq = std::abs(facilitiesOptions[i].getLifeQualityScore() + LifeQualityScore);
-        cur_eco = std::abs(facilitiesOptions[i].getEconomyScore() + EconomyScore);
-        cur_env = std::abs(facilitiesOptions[i].getEnvironmentScore() + EnvironmentScore);
+        cur_lq = facilitiesOptions[i].getLifeQualityScore() + LifeQualityScore;
+        cur_eco = facilitiesOptions[i].getEconomyScore() + EconomyScore;
+        cur_env = facilitiesOptions[i].getEnvironmentScore() + EnvironmentScore;
 
         if(std::max({cur_lq, cur_eco, cur_env}) - std::min({cur_lq, cur_eco, cur_env}) < min_diff){
             min_diff = std::max({cur_lq, cur_eco, cur_env}) - std::min({cur_lq, cur_eco, cur_env});
             selected_fac_index = i;
         }
     }
+<<<<<<< HEAD
     return facilitiesOptions[selected_fac_index];*/
+=======
+
+    LifeQualityScore += facilitiesOptions[selected_fac_index].getLifeQualityScore();
+    EconomyScore += facilitiesOptions[selected_fac_index].getEconomyScore();
+    EnvironmentScore += facilitiesOptions[selected_fac_index].getEnvironmentScore();
+    return facilitiesOptions[selected_fac_index];
+>>>>>>> 64b74106211d3b04737b79fe8ab900e24066fca3
 }
 
 const string BalancedSelection::toString() const{

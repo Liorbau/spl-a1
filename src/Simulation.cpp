@@ -106,16 +106,27 @@ void Simulation::printFacilities()
 
 //Copy constructor
 Simulation::Simulation(Simulation& other) :
+<<<<<<< HEAD
     isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(other.actionsLog),
     plans(other.plans), settlements(other.settlements), facilitiesOptions(other.facilitiesOptions)
+=======
+    isRunning(other.isRunning), planCounter(other.planCounter), actionsLog(),
+    plans(), settlements(), facilitiesOptions(other.facilitiesOptions)
+>>>>>>> 64b74106211d3b04737b79fe8ab900e24066fca3
 {
     for (BaseAction* ba : other.actionsLog)
     {
         actionsLog.push_back(ba); 
     }
+
     for (Settlement* s : other.settlements)
     {
         settlements.push_back(s);
+    }
+
+    for (Plan p : other.plans)
+    {
+        plans.push_back(Plan(p, this->getSettlement(p.getSettlementName())));
     }
 }
 
